@@ -22,10 +22,9 @@ Coming soon...
 
 ## License
 
-Our code is built on Mask2Former (https://github.com/facebookresearch/Mask2Former) which is majorly licensed under the MIT license, with some portions under the Apache-2.0 License.
+Our code is built on [Mask2Former(https://github.com/facebookresearch/Mask2Former) which is majorly licensed under the [MIT license](https://github.com/facebookresearch/Mask2Former/blob/main/LICENSE).
  
-The Youtube-VIS datasets (https://youtube-vos.org/dataset/vis/) are licensed under a Creative Commons Attribution 4.0 License. 
+However portions of the project are available under separate license terms: Swin-Transformer-Semantic-Segmentation is licensed under the [MIT license](https://github.com/SwinTransformer/Swin-Transformer-Semantic-Segmentation/blob/main/LICENSE), Deformable-DETR is licensed under the [Apache-2.0 License](https://github.com/fundamentalvision/Deformable-DETR/blob/main/LICENSE), Transformer-XL is licensed under the [Apache-2.0 License](https://github.com/kimiyoung/transformer-xl/blob/master/LICENSE).
 
-The OVIS dataset (https://competitions.codalab.org/competitions/36203), Cityscapes-VPS (https://github.com/mcahny/vps) and MOTS datasets (https://www.vision.rwth-aachen.de/page/mots) are released under the Attribution-NonCommercial-ShareAlike (CC BY-NC-SA) License. 
 
 
