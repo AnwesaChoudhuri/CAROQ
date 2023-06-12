@@ -12,12 +12,12 @@ See [INSTALL.md](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQu
 
 Dataset preparation: See datasets/README.md.
 
-Train/Evaluation: See train_eval_script.sh 
+Train/Evaluation: See [train_eval_script.sh](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQueries/blob/master/train_eval_script.sh).
 
 
 ## Trained Models
 
-We will provide the trained models upon acceptance of the paper.
+Please find the trained models here.
 
 
 ## License
