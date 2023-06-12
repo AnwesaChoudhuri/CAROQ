@@ -5,14 +5,14 @@ We develop a simple approach for multiple video segmentation tasks, video instan
 
 ## Installation
 
-See [INSTALL.md](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQueries/blob/master/INSTALL.md).
+See [INSTALL.md](https://github.com/AnwesaChoudhuri/CAROQ/blob/master/INSTALL.md).
 
 
 ## Getting Started
 
-Dataset preparation: See [datasets/README.md](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQueries/blob/master/datasets/README.md).
+Dataset preparation: See [datasets/README.md](https://github.com/AnwesaChoudhuri/CAROQ/blob/master/datasets/README.md).
 
-Train/Evaluation: See [train_eval_script.sh](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQueries/blob/master/train_eval_script.sh).
+Train/Evaluation: See [train_eval_script.sh](https://github.com/AnwesaChoudhuri/CAROQ/blob/master/train_eval_script.sh).
 
 
 ## Trained Models
