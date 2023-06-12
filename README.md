@@ -17,7 +17,7 @@ Train/Evaluation: See [train_eval_script.sh](https://github.com/AnwesaChoudhuri/
 
 ## Trained Models
 
-Please find the trained models here.
+Coming soon...
 
 
 ## License
