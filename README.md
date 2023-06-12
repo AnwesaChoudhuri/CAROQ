@@ -10,7 +10,7 @@ See [INSTALL.md](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQu
 
 ## Getting Started
 
-Dataset preparation: See datasets/README.md.
+Dataset preparation: See [datasets/README.md](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQueries/blob/master/datasets/README.md).
 
 Train/Evaluation: See [train_eval_script.sh](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQueries/blob/master/train_eval_script.sh).
 
