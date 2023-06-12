@@ -22,7 +22,7 @@ Coming soon...
 
 ## License
 
-Our code is built on [Mask2Former(https://github.com/facebookresearch/Mask2Former) which is majorly licensed under the [MIT license](https://github.com/facebookresearch/Mask2Former/blob/main/LICENSE).
+Our code is built on [Mask2Former](https://github.com/facebookresearch/Mask2Former) which is majorly licensed under the [MIT license](https://github.com/facebookresearch/Mask2Former/blob/main/LICENSE).
  
 However portions of the project are available under separate license terms: Swin-Transformer-Semantic-Segmentation is licensed under the [MIT license](https://github.com/SwinTransformer/Swin-Transformer-Semantic-Segmentation/blob/main/LICENSE), Deformable-DETR is licensed under the [Apache-2.0 License](https://github.com/fundamentalvision/Deformable-DETR/blob/main/LICENSE), Transformer-XL is licensed under the [Apache-2.0 License](https://github.com/kimiyoung/transformer-xl/blob/master/LICENSE).
 
