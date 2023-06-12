@@ -1,11 +1,11 @@
 # Context-Aware Relative Object Queries to Unify Video Instance and Panoptic Segmentation (CVPR 2023):
 
-We develop a simple approach for multiple video segmentation tasks, video instance segmentation, multi-object tracking and segmentation and video panoptic segmentation, using the propagation of 'context-aware relative object queries'.
+We develop a simple approach for multiple video segmentation tasks, video instance segmentation, multi-object tracking and segmentation and video panoptic segmentation, using the propagation of context-aware relative object queries (CAROQ).
 
 
 ## Installation
 
-See INSTALL.md.
+See [INSTALL.md](https://github.com/AnwesaChoudhuri/ContextAwareRelativeObjectQueries/blob/master/INSTALL.md).
 
 
 ## Getting Started
