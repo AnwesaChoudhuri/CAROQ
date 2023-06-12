@@ -1,0 +1,10 @@
+_BASE_: ../../kittimots/swin/maskformer2_swin_large_IN21k_384_bs16_100ep.yaml
+DATASETS:
+  TRAIN: ("motschallenge_train",)
+  TEST: ("motschallenge_val",)
+TEST:
+  EVAL_PERIOD: 0
+  GT_DIR: "data/MOTS/train/"
+  OUTPUT_DIR: "new/"
+  EVAL_MODE: "train"
+  SEQMAP: "external/mots_tools/mots_eval/val_MOTSchallenge.seqmap"
