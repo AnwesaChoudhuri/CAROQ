@@ -2,7 +2,7 @@
 
 ### Requirements
 
-Requirements are the same as Mask2Former: https://github.com/facebookresearch/Mask2Former
+Requirements are the same as [Mask2Former](https://github.com/facebookresearch/Mask2Former).
 
 - Linux or macOS with Python ≥ 3.6
 - PyTorch ≥ 1.9 and [torchvision](https://github.com/pytorch/vision/) that matches the PyTorch installation.
@@ -22,8 +22,8 @@ sh make.sh
 
 ### Example conda environment setup
 ```bash
-conda create --name clipsqueries python=3.8 -y
-conda activate clipsqueries
+conda create --name caroq python=3.8 -y
+conda activate caroq
 conda install pytorch==1.9.0 torchvision cudatoolkit=11.1 -c pytorch -c nvidia
 pip install -U opencv-python
 
@@ -34,8 +34,9 @@ pip install -e .
 pip install git+https://github.com/cocodataset/panopticapi.git
 pip install git+https://github.com/mcordts/cityscapesScripts.git
 
-# unzip Codes
-cd CARQ_Prop
+# clone repository
+git clone https://github.com/AnwesaChoudhuri/CAROQ.git
+cd CAROQ
 pip install -r requirements.txt
 cd mask2former/modeling/pixel_decoder/ops
 sh make.sh
