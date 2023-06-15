@@ -1,5 +1,5 @@
 """
-CARQ_Prop Training Script.
+CAROQ Training Script.
 
 This script is a simplified version of the training script in detectron2/tools.
 """
@@ -38,10 +38,10 @@ from detectron2.evaluation import (
     print_csv_format,
 )
 
-from carqprop_video import YTVISDatasetMapper, YTVISEvaluator
-from carqprop_video import get_detection_dataset_dicts as video_detection_dataset_dicts
-from carqprop_video import build_detection_train_loader as video_train_loader
-from carqpropr_video import build_detection_test_loader as video_test_loader
+from caroq_video import YTVISDatasetMapper, YTVISEvaluator
+from caroq_video import get_detection_dataset_dicts as video_detection_dataset_dicts
+from caroq_video import build_detection_train_loader as video_train_loader
+from caroq_video import build_detection_test_loader as video_test_loader
 
 from cityscapes_vps.mmdet.datasets import build_dataset as build_vps_dataset
 
@@ -53,11 +53,11 @@ from detectron2.utils.logger import setup_logger
 
 import pdb
 
-from carqprop.data.datasets.register_mots import register_all_mots
+from caroq.data.datasets.register_mots import register_all_mots
 
-from carqprop.mots_evaluation import MOTSEvaluator
-from carqprop.vps_evaluation import VPSEvaluator
-from carqprop import add_maskformer2_config
+from caroq.mots_evaluation import MOTSEvaluator
+from caroq.vps_evaluation import VPSEvaluator
+from caroq import add_maskformer2_config
 
 
 class Trainer(DefaultTrainer):
