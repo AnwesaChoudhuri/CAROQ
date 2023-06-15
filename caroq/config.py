@@ -76,7 +76,7 @@ def add_maskformer2_config(cfg):
     # you can use this config to override
     cfg.MODEL.MASK_FORMER.SIZE_DIVISIBILITY = 32
     cfg.MODEL.MASK_FORMER.TIME_GAP = 2
-    cfg.MODEL.MASK_FORMER.RELATIVE_POS = True
+    cfg.MODEL.MASK_FORMER.RELATIVE_POS = False
     cfg.MODEL.MASK_FORMER.RELATIVE_POS_POWER = 1
 
     # pixel decoder config
