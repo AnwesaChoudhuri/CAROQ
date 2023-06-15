@@ -325,8 +325,6 @@ class MultiScaleMaskedTransformerDecoder(nn.Module):
         self.mask_classification = mask_classification
         self.relative_pos=relative_pos
 
-        self.relative_pos=relative_pos
-
 
         if self.relative_pos:
             P=2 ** relative_pos_power

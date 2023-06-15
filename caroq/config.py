@@ -77,7 +77,7 @@ def add_maskformer2_config(cfg):
     cfg.MODEL.MASK_FORMER.SIZE_DIVISIBILITY = 32
     cfg.MODEL.MASK_FORMER.TIME_GAP = 2
     cfg.MODEL.MASK_FORMER.RELATIVE_POS = False
-    cfg.MODEL.MASK_FORMER.RELATIVE_POS_POWER = 1
+    cfg.MODEL.MASK_FORMER.RELATIVE_POS_POWER = 16
 
     # pixel decoder config
     cfg.MODEL.SEM_SEG_HEAD.MASK_DIM = 256
