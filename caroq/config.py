@@ -18,7 +18,7 @@ def add_maskformer2_config(cfg):
     cfg.INPUT.CROP.SINGLE_CATEGORY_MAX_AREA = 1.0
     # Pad image and segmentation GT in dataset mapper.
     cfg.INPUT.SIZE_DIVISIBILITY = -1
-    
+
     # dataset config for mots evaluation
     cfg.TEST.GT_DIR="."
     cfg.TEST.OUTPUT_DIR="."
@@ -75,7 +75,9 @@ def add_maskformer2_config(cfg):
     # Sometimes `backbone.size_divisibility` is set to 0 for some backbone (e.g. ResNet)
     # you can use this config to override
     cfg.MODEL.MASK_FORMER.SIZE_DIVISIBILITY = 32
-    cfg.MODEL.MASK_FORMER.TIME_GAP = 8
+    cfg.MODEL.MASK_FORMER.TIME_GAP = 2
+    cfg.MODEL.MASK_FORMER.RELATIVE_POS = True
+    cfg.MODEL.MASK_FORMER.RELATIVE_POS_POWER = 1
 
     # pixel decoder config
     cfg.MODEL.SEM_SEG_HEAD.MASK_DIM = 256

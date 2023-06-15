@@ -43,7 +43,7 @@ from caroq_video import get_detection_dataset_dicts as video_detection_dataset_d
 from caroq_video import build_detection_train_loader as video_train_loader
 from caroq_video import build_detection_test_loader as video_test_loader
 
-from cityscapes_vps.mmdet.datasets import build_dataset as build_vps_dataset
+#from cityscapes_vps.mmdet.datasets import build_dataset as build_vps_dataset
 
 from detectron2.evaluation.evaluator import DatasetEvaluator
 
@@ -53,10 +53,10 @@ from detectron2.utils.logger import setup_logger
 
 import pdb
 
-from caroq.data.datasets.register_mots import register_all_mots
+#from caroq.data.datasets.register_mots import register_all_mots
 
-from caroq.mots_evaluation import MOTSEvaluator
-from caroq.vps_evaluation import VPSEvaluator
+#from caroq.mots_evaluation import MOTSEvaluator
+#from caroq.vps_evaluation import VPSEvaluator
 from caroq import add_maskformer2_config
 
 

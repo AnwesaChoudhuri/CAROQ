@@ -104,7 +104,6 @@ class CrossAttentionLayer(nn.Module):
         self.relative_pos=relative_pos
 
         if self.relative_pos:
-
             self.multihead_attn = RelativeMultiHeadAttention(nhead, d_model, dropout=dropout,P1=P1, P2=P2)
         else:
             self.multihead_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout)
@@ -326,6 +325,23 @@ class MultiScaleMaskedTransformerDecoder(nn.Module):
         self.mask_classification = mask_classification
         self.relative_pos=relative_pos
 
+        self.relative_pos=relative_pos
+
+
+        if self.relative_pos:
+            P=2 ** relative_pos_power
+            self.key_pos_embeddings = None# nn.Embedding(P * 2, hidden_dim)
+            self.query_pos_embeddings = None# nn.Embedding(num_queries * 2, hidden_dim)
+            self.key_second_order_scale=torch.tensor(0.)#nn.Parameter(torch.tensor(0.), requires_grad=True)
+            self.query_second_order_scale=torch.tensor(0.)#nn.Parameter(torch.tensor(0.), requires_grad=True)
+            #nn.init.xavier_normal_(self.key_pos_embeddings)
+            #self.Wr=nn.Linear(hidden_dim, hidden_dim)
+        else:
+            self.key_pos_embeddings=None
+            self.query_pos_embeddings=None
+            self.key_second_order_scale=torch.tensor(0.)#nn.Parameter(torch.tensor(0.), requires_grad=True)
+            self.query_second_order_scale=torch.tensor(0.)#nn.Parameter(torch.tensor(0.), requires_grad=True)
+
         # positional encoding
         N_steps = hidden_dim // 2
         self.pe_layer = get_pe_layer(pe_layer, N_steps)
@@ -491,7 +507,7 @@ class MultiScaleMaskedTransformerDecoder(nn.Module):
             )
         }
 
-        return out, output_return, []
+        return out, output_return
 
 
     def get_pos_src_sizes(self, x, start, bs, memory=[], training=True):

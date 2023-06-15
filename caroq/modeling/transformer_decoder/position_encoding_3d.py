@@ -24,13 +24,13 @@ class PositionEmbeddingSine3D(nn.Module):
             scale = 2 * math.pi
         self.scale = scale
 
-    def forward(self, x, mask=None):
+    def forward(self, x, mask=None, start=0):
         # b, t, c, h, w
         assert x.dim() == 5, f"{x.shape} should be a 5-dimensional Tensor, got {x.dim()}-dimensional Tensor instead"
         if mask is None:
             mask = torch.zeros((x.size(0), x.size(1), x.size(3), x.size(4)), device=x.device, dtype=torch.bool)
         not_mask = ~mask
-        z_embed = not_mask.cumsum(1, dtype=torch.float32)
+        z_embed = not_mask.cumsum(1, dtype=torch.float32)+start
         y_embed = not_mask.cumsum(2, dtype=torch.float32)
         x_embed = not_mask.cumsum(3, dtype=torch.float32)
         if self.normalize:

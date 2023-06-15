@@ -19,10 +19,10 @@ from torchvision.utils import save_image, draw_segmentation_masks
 from .modeling.criterion import SetCriterion
 from .modeling.matcher import HungarianMatcher
 import pycocotools.mask as cocomask
-from mask2former import file_helper, mots_helper
+#from mask2former import file_helper, mots_helper
 import pdb
 import time
-from mask2former_video.data_video.datasets.cityscapes_vps import CITYSCAPES_VPS_CATEGORIES
+from caroq_video.data_video.datasets.cityscapes_vps import CITYSCAPES_VPS_CATEGORIES
 import json
 from collections import namedtuple
 TrackElement = namedtuple("TrackElement", ["t", "box", "track_id", "class_", "mask", "score"])
