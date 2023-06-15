@@ -9,7 +9,6 @@ Requirements are the same as [Mask2Former](https://github.com/facebookresearch/M
   Install them together at [pytorch.org](https://pytorch.org) to make sure of this. Note, please check
   PyTorch version matches that is required by Detectron2.
 - Detectron2: follow [Detectron2 installation instructions](https://detectron2.readthedocs.io/tutorials/install.html).
-- OpenCV is optional but needed by demo and visualization
 - `pip install -r requirements.txt`
 
 ### CUDA kernel for MSDeformAttn
@@ -25,7 +24,6 @@ sh make.sh
 conda create --name caroq python=3.8 -y
 conda activate caroq
 conda install pytorch==1.9.0 torchvision cudatoolkit=11.1 -c pytorch -c nvidia
-pip install -U opencv-python
 
 # under your working directory
 git clone git@github.com:facebookresearch/detectron2.git
