@@ -16,7 +16,7 @@ Requirements are the same as [Mask2Former](https://github.com/facebookresearch/M
 After preparing the required environment, run the following command to compile CUDA kernel for MSDeformAttn:
 
 ```bash
-cd mask2former/modeling/pixel_decoder/ops
+cd caroq/modeling/pixel_decoder/ops
 sh make.sh
 ```
 
