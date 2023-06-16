@@ -26,8 +26,8 @@ data/
     JPEGImages/
 ```
 
-## Expected dataset structure for [Cityscapes-VPS]()
+## Expected dataset structure for [Cityscapes-VPS](https://opendatalab.com/Cityscapes-VPS/github.com/mcahny/vps)
 Coming soon...
 
-## Expected dataset structure for [KITTI-MOTS](), [MOTS-2020]()
+## Expected dataset structure for [KITTI-MOTS](https://www.cvlibs.net/datasets/kitti/eval_mots.php), [MOTS-2020](https://motchallenge.net/workshops/bmtt2020/tracking.html)
 Coming soon...
