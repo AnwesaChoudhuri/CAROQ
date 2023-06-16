@@ -4,7 +4,7 @@ by [Anwesa Choudhuri](https://ece.illinois.edu/about/directory/grad-students/anw
 
 [[Project Page](https://anwesachoudhuri.github.io/ContextAwareRelativeObjectQueries/)] [[Paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Choudhuri_Context-Aware_Relative_Object_Queries_To_Unify_Video_Instance_and_Panoptic_CVPR_2023_paper.pdf)] [[BibTeX](https://anwesachoudhuri.github.io/ContextAwareRelativeObjectQueries/bib.txt)]
 
-We develop a simple approach for multiple video segmentation tasks, video instance segmentation, multi-object tracking and segmentation and video panoptic segmentation, using the propagation of context-aware relative object queries (CAROQ).
+We develop a simple approach for multiple video segmentation tasks: video instance segmentation, multi-object tracking and segmentation and video panoptic segmentation, using the propagation of context-aware relative object queries (CAROQ).
 
 
 ## Installation
