@@ -45,5 +45,11 @@ If you find the code or paper useful, please cite the following BibTeX entry.
 }
 ```
 
+## Acknowledgement
+
+Code is largely based on [Mask2Former](https://github.com/facebookresearch/Mask2Former). We also borrow parts from [Transformer-XL](https://github.com/kimiyoung/transformer-xl).
+
+This work is supported in party by Agriculture and Food Research Initiative (AFRI) grant no. 2020-67021-32799/project accession no.1024178 from the USDA National Institute of Food and Agriculture: NSF/USDA National AI Institute: AIFARMS. We also thank the Illinois Center for Digital Agriculture for seed funding for this project. Work is also supported in part by NSF under Grants 2008387, 2045586, 2106825, MRI 1725729. 
+
 
 
