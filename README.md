@@ -21,7 +21,7 @@ See [datasets/README.md](https://github.com/AnwesaChoudhuri/CAROQ/blob/master/da
 
 Please create a directory called **./models** under the home directory and place all initial models for training and trained models for evaluation.
 For training, we start with [Mask2Former models](https://github.com/facebookresearch/Mask2Former/blob/main/MODEL_ZOO.md).
-Specific models used for initialization are mentioned in the config files for each dataset.
+Specific models used for initialization are mentioned in the config files for each dataset. Model paths can also be specified in the config files.
 
 Trained models are coming soon!
 
