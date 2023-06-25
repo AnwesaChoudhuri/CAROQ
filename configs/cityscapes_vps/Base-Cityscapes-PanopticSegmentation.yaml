@@ -11,7 +11,7 @@ MODEL:
     STEM_OUT_CHANNELS: 64
     STRIDE_IN_1X1: False
     OUT_FEATURES: ["res2", "res3", "res4", "res5"]
-    NORM: "SyncBN"  # use syncbn for cityscapes dataset
+    #NORM: "SyncBN"  # use syncbn for cityscapes dataset, doesn't work for single GPU.
     RES5_MULTI_GRID: [1, 1, 1]  # not used
 DATASETS:
   TRAIN: ("cityscapes_vps_train",)
@@ -38,10 +38,10 @@ INPUT:
   DATASET_MAPPER_NAME: "cityscapes_vps"
   IGNORE_VALUE: -100
   SAMPLING_FRAME_NUM: 4
-  MIN_SIZE_TRAIN: (1024,2048)
+  MIN_SIZE_TRAIN: (960, 1024)
   MIN_SIZE_TRAIN_SAMPLING: "choice_by_clip"
   RANDOM_FLIP: "flip_by_clip"
-  MIN_SIZE_TEST: 2048
+  MIN_SIZE_TEST: 1024
   # MAX_SIZE_TRAIN: 4096
   # MAX_SIZE_TEST: 2048
   AUGMENTATIONS: []

@@ -25,19 +25,14 @@ from detectron2.engine import (
     launch,
 )
 from detectron2.evaluation import (
-    CityscapesInstanceEvaluator,
-    CityscapesSemSegEvaluator,
-    COCOEvaluator,
-    COCOPanopticEvaluator,
     DatasetEvaluators,
-    LVISEvaluator,
-    SemSegEvaluator,
     verify_results,
     DatasetEvaluator,
     inference_on_dataset,
     print_csv_format,
 )
 
+from caroq_video import VPSEvaluator
 from caroq_video import YTVISDatasetMapper, YTVISEvaluator
 from caroq_video import get_detection_dataset_dicts as video_detection_dataset_dicts
 from caroq_video import build_detection_train_loader as video_train_loader

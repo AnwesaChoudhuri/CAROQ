@@ -132,53 +132,15 @@ class SetCriterion(nn.Module):
         idx = self._get_src_permutation_idx(indices)
 
         target_classes_o = torch.cat([t_["labels"][J] for t_, (_, J) in zip(targets, indices)])
-
-        #print("src", src_logits[idx].max(-1)[1])
-        #print("tgt", target_classes_o)
-
+        target_classes_o[target_classes_o==self.num_classes]=-100 # for mots/vps ambiguous category
 
         target_classes = torch.full(
             src_logits.shape[:2], self.num_classes, dtype=torch.int64, device=src_logits.device
         )
         target_classes[idx] = target_classes_o
 
-        #ignr=[not k.item() for kp in keep_indices for k in kp]
-
-        # print("here", target_classes_o, src_logits[idx].argmax(1))
-        #
-        # d0,d1,d2,d3=outputs["pred_masks"].shape
-        # r=0
-        # for op in outputs["pred_masks"].reshape(int(d0/self.time_gap), self.time_gap,d1,d2,d3).permute(0,2,1,3,4).unsqueeze(-3)[idx]:
-        #
-        #     save_image(1-op, fp=str(r)+".png")
-        #     r=r+1
-
-
         src_logits=src_logits.reshape(src_logits.shape[0]*src_logits.shape[1],-1)
         target_classes=target_classes.reshape(target_classes.shape[0]*target_classes.shape[1])
-
-        # if -100 in target_classes_o:
-        #
-        #     folder=str(time.time())[:9]
-        #     if not os.path.exists("ignore/"+folder):
-        #         os.mkdir("ignore/"+folder)
-        #         target_masks=torch.stack([t["masks"] for t in targets]).flatten(0,1)
-        #
-        #         src_masks = outputs["pred_masks"]
-        #         bs_t, d1, d2, d3=src_masks.shape
-        #         bs=int(bs_t/self.time_gap)
-        #         src_masks=src_masks.reshape(bs, self.time_gap, d1, d2, d3).permute(0,2,1,3,4)[idx]
-        #
-        #         label=outputs["pred_logits"][idx].max(-1)[1]
-        #
-        #         save_image(target_masks[target_classes_o==-100].flatten(0,1).unsqueeze(1), "ignore/"+folder+"/tgt.png", padding=1, pad_value=1)
-        #         save_image(src_masks[target_classes_o==-100].flatten(0,1).unsqueeze(1), "ignore/"+folder+"/src"+str(label[target_classes_o==-100].tolist())+".png", padding=1, pad_value=1)
-
-        #print(src_logits.shape, target_classes_o)
-
-        #target_classes[ignr]=-100
-
-
 
         loss_ce = F.cross_entropy(src_logits, target_classes, self.empty_weight, ignore_index=-100)
         losses = {"loss_ce": loss_ce}
@@ -232,12 +194,6 @@ class SetCriterion(nn.Module):
         # keep_nonzero_target_masks=target_masks.sum(-1).sum(-1).sum(-1)!=0
         # target_masks=target_masks[keep_nonzero_target_masks]
         # src_masks=src_masks[keep_nonzero_target_masks]
-
-
-
-        # for j, (tgt, src) in enumerate(zip(target_masks,src_masks)):
-        #     save_image(tgt, fp= "tgt__"+str(j)+".png", padding=1, pad_value=1)
-        #     save_image(src, fp= "src__"+str(j)+".png", padding=1, pad_value=1)
 
 
 
