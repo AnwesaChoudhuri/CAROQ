@@ -51,7 +51,6 @@ import pdb
 #from caroq.data.datasets.register_mots import register_all_mots
 
 #from caroq.mots_evaluation import MOTSEvaluator
-#from caroq.vps_evaluation import VPSEvaluator
 from caroq import add_maskformer2_config
 
 
@@ -120,16 +119,19 @@ class Trainer(DefaultTrainer):
         """
         Create evaluator(s) for a given dataset.
         """
-        if output_folder is None:
-            output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
-            os.makedirs(output_folder, exist_ok=True)
-
         if cfg.INPUT.DATASET_MAPPER_NAME =="youtube_vis":
+            if output_folder is None:
+                output_folder = os.path.join(cfg.OUTPUT_DIR, "inference/")
+                os.makedirs(output_folder, exist_ok=True)
             evaluator = YTVISEvaluator(dataset_name, cfg, True, output_folder)
 
         elif cfg.INPUT.DATASET_MAPPER_NAME=="cityscapes_vps":
-            evaluator = VPSEvaluator(output_folder)
-            #evaluator = YTVISEvaluator(dataset_name, cfg, True, output_folder)
+            if output_folder is None:
+                output_folder = os.path.join(cfg.OUTPUT_DIR, "panoptic_pred/")
+                os.makedirs(output_folder, exist_ok=True)
+                truth_dir = "data/Cityscapes/cityscapes_vps/val/panoptic_video/"
+                gt_json = "data/Cityscapes/cityscapes_vps/panoptic_gt_val_city_vps.json"
+            evaluator = VPSEvaluator(output_folder, truth_dir, gt_json)
 
         return evaluator
 

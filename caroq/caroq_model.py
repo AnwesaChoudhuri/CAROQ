@@ -148,7 +148,6 @@ class MaskFormer(nn.Module):
         )
 
         weight_dict = {"loss_ce": class_weight, "loss_mask": mask_weight, "loss_dice": dice_weight}
-        #weight_dict = {"loss_ce": class_weight, "loss_mask": mask_weight/cfg.MODEL.MASK_FORMER.TIME_GAP, "loss_dice": dice_weight/cfg.MODEL.MASK_FORMER.TIME_GAP}
 
         if deep_supervision:
             dec_layers = cfg.MODEL.MASK_FORMER.DEC_LAYERS
@@ -230,37 +229,15 @@ class MaskFormer(nn.Module):
         """
         if self.training:
             images = [x["image"].to(self.device).squeeze(0) for x in batched_inputs]
-        else:
-            images = [x["image"].squeeze(0) for x in batched_inputs] # sequence can be huge when evaluating. Don't put on cuda
 
-        if self.metadata.name.find("vis")>-1 or self.metadata.name.find("vps")>-1:
-            abc = [x["file_names"] for x in batched_inputs]
-            names= [a for b in abc for a in b]
-            names=[a[-a[::-1].find("/"):] for a in names]
-        else:
-            abc = [x["name"] for x in batched_inputs]
-            names= [a for b in abc for a in b]
+            images = [(x - self.pixel_mean.to(x.device)) / self.pixel_std.to(x.device) for x in images]
+            images = ImageList.from_tensors(images, self.size_divisibility)
 
+            c, h, w =images.tensor.shape[-3:]
 
-
-        images = [(x - self.pixel_mean.to(x.device)) / self.pixel_std.to(x.device) for x in images]
-        images = ImageList.from_tensors(images, self.size_divisibility)
-
-        c, h, w =images.tensor.shape[-3:]
-
-
-        if self.training:
             features = self.backbone(images.tensor.reshape(-1, c, h,w))
             outputs, _ = self.sem_seg_head(features, training=True) #training= true for track decoder (pairs during training)
-
-            if self.metadata.name.find("vis")>-1 or self.metadata.name.find("vps")>-1:
-                targets = self.prepare_targets(batched_inputs, images)
-
-
-            else:
-                targets = [{"labels" : x["instances"]["labels"].to(self.device),
-                            "masks": x["instances"]["masks"].to(self.device)}
-                            for x in batched_inputs]
+            targets = self.prepare_targets(batched_inputs, images)
 
             losses = self.criterion(outputs, targets)
 
@@ -273,14 +250,20 @@ class MaskFormer(nn.Module):
             return losses
         else:
 
-            #batch size is 1
-            time_gap=self.time_gap#*2
+            images = [x["image"].squeeze(0) for x in batched_inputs] # sequence can be huge when evaluating. Don't put on cuda
+
+            images = [(x - self.pixel_mean.to(x.device)) / self.pixel_std.to(x.device) for x in images]
+            images = ImageList.from_tensors(images, self.size_divisibility)
+
+            c, h, w =images.tensor.shape[-3:]
+
+            # batch size is 1
+            time_gap=self.time_gap
 
             all_tracks=[]
             vid_len=images.tensor.shape[1]
             ct=0
             if self.metadata.name.find("vis")>-1 or self.metadata.name.find("vps")>-1:
-                #objs=[{"mask":torch.zeros(batched_inputs[0]["length"], batched_inputs[0]["height"], batched_inputs[0]["width"]), "score":[], "class": []} for qr in range(self.num_queries)]
                 mask_cls_results_all=[]
                 mask_pred_results_all=[]
 
@@ -292,8 +275,6 @@ class MaskFormer(nn.Module):
                 imgs=torch.cat([images.tensor, images_pad], dim=1)
                 imgs=imgs.reshape(-1, time_gap, c, h,w)
 
-
-
             previous_tracks=[]
             max_id=0
 
@@ -302,10 +283,14 @@ class MaskFormer(nn.Module):
             prev_output=[]
             annotations_all=[]
 
+            if self.metadata.name.find("vis")==-1 and self.metadata.name.find("vps")==-1:
+                abc = [x["name"] for x in batched_inputs]
+                names= [a for b in abc for a in b]
+
             for img in imgs:
 
-                current_height = batched_inputs[0]["image"].shape[-2:][0]
-                current_width = batched_inputs[0]["image"].shape[-2:][1]
+                current_height = img.shape[2]#batched_inputs[0]["image"].shape[-2:][0]
+                current_width = img.shape[3]#batched_inputs[0]["image"].shape[-2:][1]
 
                 features = self.backbone(img.to(self.device))
 
@@ -316,12 +301,13 @@ class MaskFormer(nn.Module):
 
                 del outputs
 
-                if self.metadata.name.find("vis")>-1:# or self.metadata.name.find("vps")>-1:
+                if self.metadata.name.find("vis")>-1:
                     mask_cls_results_all.append(mask_cls_results[0].cpu())
                     mask_pred_results_all.append(mask_pred_results.permute(1,0,2,3).cpu())
 
                 elif self.metadata.name.find("vps")>-1:
 
+                    # upsample to current frame size
                     mask_pred_results = F.interpolate(
                         mask_pred_results,
                         size=(current_height, current_width),
@@ -329,15 +315,20 @@ class MaskFormer(nn.Module):
                         align_corners=False,
                     )
 
+                    # remove the padding
+                    mask_pred_results=mask_pred_results[:,:, :batched_inputs[0]["image"].shape[-2:][0], :batched_inputs[0]["image"].shape[-2:][1]]
+
+                    # upsample to original frame size
+                    mask_pred_results = F.interpolate(
+                        mask_pred_results,
+                        size=(batched_inputs[0]["height"], batched_inputs[0]["width"]),
+                        mode="bilinear",
+                        align_corners=False,
+                    )
+
                     for i, mask_pred_result in enumerate(mask_pred_results):
 
                         mask_cls_result=mask_cls_results[int(i/self.time_gap)]
-
-                        if self.sem_seg_postprocess_before_inference:
-                            mask_pred_result = sem_seg_postprocess(mask_pred_result, (current_height, current_width),  batched_inputs[0]["height"], batched_inputs[0]["width"])
-
-                        # remove the padding
-                        mask_pred_result=mask_pred_result[:,:batched_inputs[0]["height"], :batched_inputs[0]["width"]]
 
                         if ct==vid_len:
                             break
@@ -355,13 +346,14 @@ class MaskFormer(nn.Module):
                         annotations["file_name"]=save_file_name+".png"#output_folder+"/pan_pred/"+
                         annotations["image_id"]=save_file_name
 
-                        panoptic_seg, segments_info= self.panoptic_inference(mask_cls_result, mask_pred_result, save_file=output_folder+"/pan_pred/"+save_file_name+".png", img=batched_inputs[0]["image"][ct].permute(1,2,0).cpu().numpy())
+                        panoptic_seg, segments_info= self.panoptic_inference(mask_cls_result, mask_pred_result, save_file=output_folder+"/pan_pred/"+save_file_name+".png")
 
                         annotations["segments_info"]=segments_info
                         annotations_all.append(annotations)
                         ct+=1
 
                 else:
+
                     # upsample masks
                     mask_pred_results = F.interpolate(
                         mask_pred_results,
@@ -374,15 +366,7 @@ class MaskFormer(nn.Module):
 
                         mask_cls_result=mask_cls_results[int(i/self.time_gap)]
                         if self.sem_seg_postprocess_before_inference:
-
-                            if self.metadata.name.find("vis")>-1 or self.metadata.name.find("vps")>-1:
-                                mask_pred_result = sem_seg_postprocess(mask_pred_result, (current_height, current_width),  batched_inputs[0]["height"], batched_inputs[0]["width"])
-
-                            else:
-                                mask_pred_result = sem_seg_postprocess(mask_pred_result, (current_height, current_width),  current_height, current_width)
-                                #don't upsample
-
-
+                            mask_pred_result = sem_seg_postprocess(mask_pred_result, (current_height, current_width),  current_height, current_width)
 
                         # remove the padding
                         mask_pred_result=mask_pred_result[:,:batched_inputs[0]["height"], :batched_inputs[0]["width"]]
@@ -399,23 +383,11 @@ class MaskFormer(nn.Module):
 
                         ct+=1
 
-
             if self.metadata.name.find("vis")>-1:
                 unpadded_size = images.image_sizes[0]
                 padded_size=(images.tensor.shape[-2], images.tensor.shape[-1])
 
-
-                #hyp_tracks = mots_helper.make_disjoint(all_tracks, "score")
-
-                # d1,d2=mask_pred_results.shape[:2]
-                # mask_pred_results=sem_seg_postprocess(mask_pred_results.flatten(0,1), (current_height, current_width),  batched_inputs[0]["height"], batched_inputs[0]["width"])
-                # mask_pred_results=mask_pred_results.reshape(d1,d2, mask_pred_results.shape[-2], mask_pred_results.shape[-1])
-                # mask_pred_results=mask_pred_results[:,:,:batched_inputs[0]["height"], :batched_inputs[0]["width"]]
-                # objs=self.ytvis_inference(mask_pred_results.permute(1,0,2,3),mask_cls_results[0], objs, (time, time+self.time_gap),batched_inputs[0]["length"])
-                # time=time+self.time_gap
-
                 return self.inference_video(torch.stack(mask_cls_results_all), torch.stack(mask_pred_results_all), unpadded_size, padded_size, batched_inputs[0]["height"], batched_inputs[0]["width"], batched_inputs[0]["length"])
-                #return self.inference_video_2(objs, batched_inputs[0]["height"], batched_inputs[0]["width"])
 
             elif self.metadata.name.find("mots")>-1:
                 hyp_tracks = mots_helper.make_disjoint(all_tracks, "score")
@@ -427,12 +399,46 @@ class MaskFormer(nn.Module):
                         open(output_folder+"/pred_"+str(batched_inputs[0]["video_id"])+".json",'w'))
                 return
 
+    def prepare_targets(self, targets, images):
 
-                #unpadded_size = images.image_sizes[0]
-                #padded_size=(images.tensor.shape[-2], images.tensor.shape[-1])
-                #return self.panoptic_inference_video(torch.stack(mask_cls_results_all), torch.stack(mask_pred_results_all), unpadded_size, padded_size, batched_inputs[0]["height"], batched_inputs[0]["width"], batched_inputs[0]["length"])
+        if self.metadata.name.find("vis")==-1 and self.metadata.name.find("vps")==-1: # for mots
 
-    def panoptic_inference(self, mask_cls, mask_pred,save_file="tmp.png", img=[]):
+            return [{"labels" : x["instances"]["labels"].to(self.device),
+                        "masks": x["instances"]["masks"].to(self.device)}
+                        for x in targets]
+        else: # for vis and vps
+
+            h_pad, w_pad = images.tensor.shape[-2:]
+            gt_instances = []
+            for targets_per_video in targets:
+                _num_instance = len(targets_per_video["instances"][0])
+                mask_shape = [_num_instance, self.num_frames, h_pad, w_pad]
+                gt_masks_per_video = torch.zeros(mask_shape, dtype=torch.bool, device=self.device)
+
+                gt_ids_per_video = []
+                for f_i, targets_per_frame in enumerate(targets_per_video["instances"]):
+                    targets_per_frame = targets_per_frame.to(self.device)
+                    h, w = targets_per_frame.image_size
+
+                    gt_ids_per_video.append(targets_per_frame.gt_ids[:, None])
+                    gt_masks_per_video[:, f_i, :h, :w] = targets_per_frame.gt_masks.tensor
+
+                gt_ids_per_video = torch.cat(gt_ids_per_video, dim=1)
+                valid_idx = (gt_ids_per_video != -1).any(dim=-1)
+
+                gt_classes_per_video = targets_per_frame.gt_classes[valid_idx]          # N,
+                gt_ids_per_video = gt_ids_per_video[valid_idx]                          # N, num_frames
+
+                gt_instances.append({"labels": gt_classes_per_video, "ids": gt_ids_per_video})
+                gt_masks_per_video = gt_masks_per_video[valid_idx].float()          # N, num_frames, H, W
+                gt_instances[-1].update({"masks": gt_masks_per_video})
+
+            return gt_instances
+
+
+    # inference for different tasks
+
+    def panoptic_inference(self, mask_cls, mask_pred,save_file="tmp.png"):
 
         scores, labels = F.softmax(mask_cls, dim=-1).max(-1)
         mask_pred = mask_pred.sigmoid()
@@ -449,7 +455,6 @@ class MaskFormer(nn.Module):
 
         h, w = cur_masks.shape[-2:]
         panoptic_seg = torch.zeros((h, w), dtype=torch.int32, device=cur_masks.device)
-        panoptic_seg2 = torch.zeros((h, w, 3), dtype=torch.uint8, device=cur_masks.device)
         segments_info = []
 
         if cur_masks.shape[0] == 0:
@@ -472,7 +477,6 @@ class MaskFormer(nn.Module):
                         mapping[indx]=k_["id"]
                         indx+=1
 
-                #isthing = pred_class in self.metadata.thing_dataset_id_to_contiguous_id.values()
                 isthing = pred_class in mapping.values()
                 mask_area = (cur_mask_ids == k).sum().item()
                 original_area = (cur_masks[k] >= 0.5).sum().item()
@@ -482,21 +486,7 @@ class MaskFormer(nn.Module):
                     if mask_area / original_area < self.overlap_threshold:
                         continue
 
-                    # merge stuff regions
-                    # if not isthing:
-                    #     if int(pred_class) in stuff_memory_list.keys():
-                    #         panoptic_seg[mask] = stuff_memory_list[int(pred_class)]
-                    #         continue
-                    #     else:
-                    #         stuff_memory_list[int(pred_class)] = current_segment_id
-
                     panoptic_seg[mask] = current_segment_id
-
-                    color=id2rgb(rgb2id(CITYSCAPES_VPS_CATEGORIES[int(pred_class)]["color"])+current_segment_id)
-                    panoptic_seg2[:,:,2][mask] = color[0]
-                    panoptic_seg2[:,:,1][mask] = color[1]
-                    panoptic_seg2[:,:,0][mask] = color[2]
-                    #print(current_segment_id)
 
                     segments_info.append(
                         {
@@ -507,25 +497,7 @@ class MaskFormer(nn.Module):
                         }
                     )
 
-
-
-            # img=panoptic_seg.cpu().numpy()
-            # Image.fromarray(img).save(save_file)
-
-            Vis=Visualizer(img)
-
-            #id2rgb
-            op=Vis.overlay_instances(masks=[k>0.5 for k in cur_masks.cpu().numpy()],
-                                            labels=[CITYSCAPES_VPS_CATEGORIES[cc.item()]["name"]+str(cci)
-                                                        if CITYSCAPES_VPS_CATEGORIES[cc.item()]["isthing"]==1
-                                                        else CITYSCAPES_VPS_CATEGORIES[cc.item()]["name"] for cci,cc in enumerate(cur_classes)],
-                                            assigned_colors=[np.array(id2rgb(rgb2id(CITYSCAPES_VPS_CATEGORIES[cc.item()]["color"])+cci*100))/256.
-                                                                                                    for cci,cc in enumerate(cur_classes)])
-            op.save(save_file.replace("pan_pred","pan_pred2"))
-
             cv2.imwrite(save_file, panoptic_seg.cpu().numpy().astype(np.uint8))
-            #cv2.imwrite(save_file.replace("pan_pred","pan_pred2"), panoptic_seg2.cpu().numpy().astype(np.uint8))
-            #print(save_file.replace("pan_pred","pan_pred2"), torch.unique(panoptic_seg).tolist(), [si["id"] for si in segments_info])
 
             return panoptic_seg, segments_info
 
@@ -640,36 +612,6 @@ class MaskFormer(nn.Module):
 
         return video_output
 
-
-    def prepare_targets(self, targets, images):
-
-        h_pad, w_pad = images.tensor.shape[-2:]
-        gt_instances = []
-        for targets_per_video in targets:
-            _num_instance = len(targets_per_video["instances"][0])
-            mask_shape = [_num_instance, self.num_frames, h_pad, w_pad]
-            gt_masks_per_video = torch.zeros(mask_shape, dtype=torch.bool, device=self.device)
-
-            gt_ids_per_video = []
-            for f_i, targets_per_frame in enumerate(targets_per_video["instances"]):
-                targets_per_frame = targets_per_frame.to(self.device)
-                h, w = targets_per_frame.image_size
-
-                gt_ids_per_video.append(targets_per_frame.gt_ids[:, None])
-                gt_masks_per_video[:, f_i, :h, :w] = targets_per_frame.gt_masks.tensor
-
-            gt_ids_per_video = torch.cat(gt_ids_per_video, dim=1)
-            valid_idx = (gt_ids_per_video != -1).any(dim=-1)
-
-            gt_classes_per_video = targets_per_frame.gt_classes[valid_idx]          # N,
-            gt_ids_per_video = gt_ids_per_video[valid_idx]                          # N, num_frames
-
-            gt_instances.append({"labels": gt_classes_per_video, "ids": gt_ids_per_video})
-            gt_masks_per_video = gt_masks_per_video[valid_idx].float()          # N, num_frames, H, W
-            gt_instances[-1].update({"masks": gt_masks_per_video})
-
-        return gt_instances
-
     def inference(self, mask_cls, mask_pred, t=0, previous_tracks=[], max_id=0, previous_keep=[], inference_type="mots"):
         # need to change
         scores, labels = F.softmax(mask_cls, dim=-1).max(-1)
@@ -758,64 +700,3 @@ class MaskFormer(nn.Module):
         max_id=max(ids+[max_id])
 
         return segments_info, max_id, keep
-
-    def panoptic_inference_video(self, pred_cls, pred_masks, unpadded_size, padded_size, output_height, output_width, length):
-        if len(pred_cls) > 0:
-            #pdb.set_trace()
-            scores_tmp = (F.softmax(pred_cls[:,:,:-1], dim=-1))#[:, :, :-1])
-            nonzero_masks=(pred_masks>0).sum(-1).sum(-1).sum(-1)>0
-            scores_tmp[nonzero_masks==0]=0.
-            normalizing_factor=(nonzero_masks).sum(0) # to scale the scores; if all T*H*W masks are non-zero, this is total no of num_frames
-            normalizing_factor[normalizing_factor==0]=pred_masks.shape[0]
-            scores = (scores_tmp.sum(0)/normalizing_factor.unsqueeze(1))
-
-            pred_masks=pred_masks.permute(1,0,2,3,4).flatten(1,2)
-            #print(length, pred_masks.shape[1])
-            pred_masks = F.interpolate(
-                pred_masks,
-                size=padded_size,
-                mode="bilinear",
-                align_corners=False,
-            )
-            labels = torch.arange(self.sem_seg_head.num_classes, device=self.device).unsqueeze(0).repeat(self.num_queries, 1).flatten(0, 1)
-
-
-            # # mine: keep predictions with confidence greater than self.object_mask_threshold
-            # scores_per_image = scores.flatten(0,1)
-            # topk_indices=torch.where(scores_per_image>self.object_mask_threshold)[0]
-            # labels_per_image = labels[topk_indices]
-            # scores_per_image=scores_per_image[topk_indices]
-            # topk_indices = topk_indices // self.sem_seg_head.num_classes
-            # pred_masks = pred_masks[topk_indices]
-
-            # original: keep top-10 predictions
-            scores_per_image, topk_indices = scores.flatten(0, 1).topk(200, sorted=False)
-            labels_per_image = labels[topk_indices]
-            topk_indices = topk_indices // self.sem_seg_head.num_classes
-            pred_masks = pred_masks[topk_indices]
-
-            pred_masks = pred_masks[:, :length, :unpadded_size[0], :unpadded_size[1]]
-            pred_masks = F.interpolate(
-                pred_masks, size=(output_height, output_width), mode="bilinear", align_corners=False
-            )
-            #[save_image((pred_masks[k]>0).float().unsqueeze(1), "new/pd"+str(k)+"_"+str(scores_per_image.tolist()[k])+"_"+str(labels_per_image.tolist()[k])+".png", pad_value=1, padding=1) for k in range(200)]
-
-
-            masks = pred_masks>0#.sigmoid() > 0.5
-
-            out_scores = scores_per_image.tolist()
-            out_labels = labels_per_image.tolist()
-            out_masks = [m for m in masks.cpu()]
-        else:
-            out_scores = []
-            out_labels = []
-            out_masks = []
-
-        video_output = {
-            "image_size": (output_height, output_width),
-            "pred_scores": out_scores,
-            "pred_labels": out_labels,
-            "pred_masks": out_masks,
-        }
-
-        return video_output
