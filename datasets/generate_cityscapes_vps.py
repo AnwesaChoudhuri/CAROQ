@@ -13,13 +13,11 @@ import pycocotools.mask as cocomask
 from detectron2.data import detection_utils as utils
 from panopticapi.utils import rgb2id
 
-mode="train"
+mode=sys.argv[0]
 
-input_dir="../data/Cityscapes/cityscapes_vps/"+mode+"/panoptic_video/"
-json_file="../data/Cityscapes/cityscapes_vps/panoptic_gt_"+mode+"_city_vps.json"
-output_file="../data/Cityscapes/cityscapes_vps/panoptic_vps_"+mode+".json"
-
-#json_file="../data/Cityscapes/cityscapes_vps/panoptic_im_train_city_vps.json"
+input_dir="data/Cityscapes/cityscapes_vps/"+mode+"/panoptic_video/"
+json_file="data/Cityscapes/cityscapes_vps/panoptic_gt_"+mode+"_city_vps.json"
+output_file="data/Cityscapes/cityscapes_vps/panoptic_vps_"+mode+".json"
 
 json_data=json.load(open(json_file))
 output_data={}
@@ -27,9 +25,6 @@ output_data["categories"]=json_data["categories"]
 output_data["videos"]=[]
 output_data["annotations"]=[]
 videos=np.unique([a["file_name"][:a["file_name"].find("_")] for a in json_data["images"]])
-
-# cityscapes_dataset=build_vps_dataset()
-# abc=cityscapes_dataset.dataset.prepare_train_img(0)
 
 for idx, v in enumerate(videos):
     print(idx)
@@ -68,7 +63,6 @@ for idx, v in enumerate(videos):
                 unique_objects[u_idx]["iscrowd"]=obj["iscrowd"]
                 unique_objects[u_idx]["id"]=obj["id"]
                 unique_objects[u_idx]["video_id"]=idx
-
 
             else:
                 unique_objects[u_idx]["areas"].append(0)

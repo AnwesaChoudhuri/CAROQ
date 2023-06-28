@@ -1,0 +1,4 @@
+# ninja log v5
+0	2595	1687970512000000000	/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/build/temp.linux-x86_64-cpython-38/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/cpu/ms_deform_attn_cpu.o	7b7525d2b1aa0bd3
+1	9679	1687970519000000000	/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/build/temp.linux-x86_64-cpython-38/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/cuda/ms_deform_attn_cuda.o	f65953af6ae85e60
+1	15175	1687970525000000000	/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/build/temp.linux-x86_64-cpython-38/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/vision.o	b8b39da739abff6c

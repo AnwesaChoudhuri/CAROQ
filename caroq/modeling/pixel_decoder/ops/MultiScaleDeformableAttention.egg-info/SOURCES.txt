@@ -2,6 +2,9 @@ setup.py
 /home/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/vision.cpp
 /home/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/cpu/ms_deform_attn_cpu.cpp
 /home/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/cuda/ms_deform_attn_cuda.cu
+/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/vision.cpp
+/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/cpu/ms_deform_attn_cpu.cpp
+/projects/anwesac2/Workspace/CAROQ/caroq/modeling/pixel_decoder/ops/src/cuda/ms_deform_attn_cuda.cu
 MultiScaleDeformableAttention.egg-info/PKG-INFO
 MultiScaleDeformableAttention.egg-info/SOURCES.txt
 MultiScaleDeformableAttention.egg-info/dependency_links.txt
