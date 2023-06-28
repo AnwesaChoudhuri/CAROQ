@@ -11,7 +11,7 @@ MODEL:
     STEM_OUT_CHANNELS: 64
     STRIDE_IN_1X1: False
     OUT_FEATURES: ["res2", "res3", "res4", "res5"]
-    #NORM: "SyncBN"  # use syncbn for cityscapes dataset, doesn't work for single GPU.
+    NORM: "SyncBN"  # use syncbn for cityscapes dataset, doesn't work for single GPU.
     RES5_MULTI_GRID: [1, 1, 1]  # not used
 DATASETS:
   TRAIN: ("cityscapes_vps_train",)

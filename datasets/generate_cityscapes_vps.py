@@ -13,11 +13,11 @@ import pycocotools.mask as cocomask
 from detectron2.data import detection_utils as utils
 from panopticapi.utils import rgb2id
 
-mode=sys.argv[0]
+mode=sys.argv[1]
 
 input_dir="data/Cityscapes/cityscapes_vps/"+mode+"/panoptic_video/"
 json_file="data/Cityscapes/cityscapes_vps/panoptic_gt_"+mode+"_city_vps.json"
-output_file="data/Cityscapes/cityscapes_vps/panoptic_vps_"+mode+".json"
+output_file="data/Cityscapes/cityscapes_vps/panoptic_vps_"+mode+"3.json"
 
 json_data=json.load(open(json_file))
 output_data={}
@@ -27,7 +27,7 @@ output_data["annotations"]=[]
 videos=np.unique([a["file_name"][:a["file_name"].find("_")] for a in json_data["images"]])
 
 for idx, v in enumerate(videos):
-    print(idx)
+    print(mode, "split, video number: ", idx)
     files=[i for i in json_data["images"] if i["file_name"].startswith(v)]
     anno_files=[i for i in json_data["annotations"] if i["file_name"].startswith(v)]
     temp={}
