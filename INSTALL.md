@@ -34,6 +34,6 @@ pip install -e .
 git clone https://github.com/AnwesaChoudhuri/CAROQ.git
 cd CAROQ
 pip install -r requirements.txt
-cd mask2former/modeling/pixel_decoder/ops
+cd caroq/modeling/pixel_decoder/ops
 sh make.sh
 ```
