@@ -17,7 +17,7 @@ mode=sys.argv[1]
 
 input_dir="data/Cityscapes/cityscapes_vps/"+mode+"/panoptic_video/"
 json_file="data/Cityscapes/cityscapes_vps/panoptic_gt_"+mode+"_city_vps.json"
-output_file="data/Cityscapes/cityscapes_vps/panoptic_vps_"+mode+"3.json"
+output_file="data/Cityscapes/cityscapes_vps/panoptic_vps_"+mode+".json"
 
 json_data=json.load(open(json_file))
 output_data={}
