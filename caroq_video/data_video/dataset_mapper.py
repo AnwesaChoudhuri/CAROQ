@@ -1,4 +1,3 @@
-
 import copy
 import logging
 import random
@@ -58,7 +57,7 @@ def _get_dummy_anno(num_classes):
         "id": -1,
         "bbox": np.array([0, 0, 0, 0]),
         "bbox_mode": BoxMode.XYXY_ABS,
-        "segmentation": [np.array([0.0] * 6)]
+        "segmentation": [np.array([0.0] * 6)],
     }
 
 
@@ -78,7 +77,10 @@ def ytvis_annotations_to_instances(annos, image_size):
             "gt_masks", if they can be obtained from `annos`.
             This is the format that builtin models expect.
     """
-    boxes = [BoxMode.convert(obj["bbox"], obj["bbox_mode"], BoxMode.XYXY_ABS) for obj in annos]
+    boxes = [
+        BoxMode.convert(obj["bbox"], obj["bbox_mode"], BoxMode.XYXY_ABS)
+        for obj in annos
+    ]
     target = Instances(image_size)
     target.gt_boxes = Boxes(boxes)
 
@@ -94,9 +96,9 @@ def ytvis_annotations_to_instances(annos, image_size):
         segms = [obj["segmentation"] for obj in annos]
         masks = []
         for segm in segms:
-            assert segm.ndim == 2, "Expect segmentation of 2 dimensions, got {}.".format(
-                segm.ndim
-            )
+            assert (
+                segm.ndim == 2
+            ), "Expect segmentation of 2 dimensions, got {}.".format(segm.ndim)
             # mask array
             masks.append(segm)
         # torch.from_numpy does not support array with negative stride.
@@ -185,18 +187,21 @@ class YTVISDatasetMapper:
         if self.is_train:
             ref_frame = random.randrange(video_length)
 
-            start_idx = max(0, ref_frame-self.sampling_frame_range)
-            end_idx = min(video_length, ref_frame+self.sampling_frame_range + 1)
+            start_idx = max(0, ref_frame - self.sampling_frame_range)
+            end_idx = min(video_length, ref_frame + self.sampling_frame_range + 1)
 
             selected_idx = np.random.choice(
-                np.array(list(range(start_idx, ref_frame)) + list(range(ref_frame+1, end_idx))),
+                np.array(
+                    list(range(start_idx, ref_frame))
+                    + list(range(ref_frame + 1, end_idx))
+                ),
                 self.sampling_frame_num - 1,
             )
             selected_idx = selected_idx.tolist() + [ref_frame]
             selected_idx = sorted(selected_idx)
             if self.sampling_frame_shuffle:
                 random.shuffle(selected_idx)
-            #selected_idx=[4,5,8,9]
+            # selected_idx=[4,5,8,9]
             # if selected_idx[0]+1<selected_idx[2]:
             #     selected_idx=[selected_idx[0], selected_idx[0]+1, selected_idx[2], selected_idx[2]+1]
             # else:
@@ -204,7 +209,6 @@ class YTVISDatasetMapper:
 
         else:
             selected_idx = range(video_length)
-
 
         video_annos = dataset_dict.pop("annotations", None)
         file_names = dataset_dict.pop("file_names", None)
@@ -235,7 +239,9 @@ class YTVISDatasetMapper:
             # Pytorch's dataloader is efficient on torch.Tensor due to shared-memory,
             # but not efficient on large generic data structures due to the use of pickle & mp.Queue.
             # Therefore it's important to use torch.Tensor.
-            dataset_dict["image"].append(torch.as_tensor(np.ascontiguousarray(image.transpose(2, 0, 1))))
+            dataset_dict["image"].append(
+                torch.as_tensor(np.ascontiguousarray(image.transpose(2, 0, 1)))
+            )
 
             if (video_annos is None) or (not self.is_train):
                 continue
@@ -261,7 +267,9 @@ class YTVISDatasetMapper:
                 sorted_annos[idx] = _anno
             _gt_ids = [_anno["id"] for _anno in sorted_annos]
 
-            instances = utils.annotations_to_instances(sorted_annos, image_shape, mask_format="bitmask")
+            instances = utils.annotations_to_instances(
+                sorted_annos, image_shape, mask_format="bitmask"
+            )
             instances.gt_ids = torch.tensor(_gt_ids)
             if instances.has("gt_masks"):
                 instances.gt_boxes = instances.gt_masks.get_bounding_boxes()
@@ -270,7 +278,7 @@ class YTVISDatasetMapper:
                 instances.gt_masks = BitMasks(torch.empty((0, *image_shape)))
             dataset_dict["instances"].append(instances)
 
-        dataset_dict["image"]=torch.stack(dataset_dict["image"])
-        dataset_dict["dataset"]="ytvis"
+        dataset_dict["image"] = torch.stack(dataset_dict["image"])
+        dataset_dict["dataset"] = "ytvis"
 
         return dataset_dict

@@ -1,5 +1,3 @@
-
-
 import contextlib
 import copy
 import io
@@ -22,6 +20,7 @@ from detectron2.evaluation import DatasetEvaluator
 from detectron2.utils.file_io import PathManager
 from detectron2.utils.logger import create_small_table
 import pdb
+
 
 class YTVISEvaluator(DatasetEvaluator):
     """
@@ -149,10 +148,15 @@ class YTVISEvaluator(DatasetEvaluator):
 
         # unmap the category ids for COCO
         if hasattr(self._metadata, "thing_dataset_id_to_contiguous_id"):
-            dataset_id_to_contiguous_id = self._metadata.thing_dataset_id_to_contiguous_id
+            dataset_id_to_contiguous_id = (
+                self._metadata.thing_dataset_id_to_contiguous_id
+            )
             all_contiguous_ids = list(dataset_id_to_contiguous_id.values())
             num_classes = len(all_contiguous_ids)
-            assert min(all_contiguous_ids) == 0 and max(all_contiguous_ids) == num_classes - 1
+            assert (
+                min(all_contiguous_ids) == 0
+                and max(all_contiguous_ids) == num_classes - 1
+            )
 
             reverse_id_mapping = {v: k for k, v in dataset_id_to_contiguous_id.items()}
             for result in predictions:
@@ -176,10 +180,7 @@ class YTVISEvaluator(DatasetEvaluator):
             return
 
         coco_eval = (
-            _evaluate_predictions_on_coco(
-                self._ytvis_api,
-                predictions,
-            )
+            _evaluate_predictions_on_coco(self._ytvis_api, predictions,)
             if len(predictions) > 0
             else None  # cocoapi does not handle empty results very well
         )
@@ -209,7 +210,9 @@ class YTVISEvaluator(DatasetEvaluator):
 
         # the standard metrics
         results = {
-            metric: float(coco_eval.stats[idx] * 100 if coco_eval.stats[idx] >= 0 else "nan")
+            metric: float(
+                coco_eval.stats[idx] * 100 if coco_eval.stats[idx] >= 0 else "nan"
+            )
             for idx, metric in enumerate(metrics)
         }
         self._logger.info(
@@ -238,7 +241,9 @@ class YTVISEvaluator(DatasetEvaluator):
         # tabulate it
         N_COLS = min(6, len(results_per_category) * 2)
         results_flatten = list(itertools.chain(*results_per_category))
-        results_2d = itertools.zip_longest(*[results_flatten[i::N_COLS] for i in range(N_COLS)])
+        results_2d = itertools.zip_longest(
+            *[results_flatten[i::N_COLS] for i in range(N_COLS)]
+        )
         table = tabulate(
             results_2d,
             tablefmt="pipe",
@@ -293,9 +298,7 @@ def instances_to_coco_json_video(inputs, outputs):
 
 
 def _evaluate_predictions_on_coco(
-    coco_gt,
-    coco_results,
-    img_ids=None,
+    coco_gt, coco_results, img_ids=None,
 ):
     """
     Evaluate the coco results using COCOEval API.

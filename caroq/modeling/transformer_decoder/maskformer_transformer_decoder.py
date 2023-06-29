@@ -102,8 +102,6 @@ class StandardTransformerDecoder(nn.Module):
             self.class_embed = nn.Linear(hidden_dim, num_classes + 1)
         self.mask_embed = MLP(hidden_dim, hidden_dim, mask_dim, 3)
 
-
-
     @classmethod
     def from_config(cls, cfg, in_channels, mask_classification):
         ret = {}
@@ -129,11 +127,15 @@ class StandardTransformerDecoder(nn.Module):
 
     def forward(self, x, mask_features, mask=None):
         if mask is not None:
-            mask = F.interpolate(mask[None].float(), size=x.shape[-2:]).to(torch.bool)[0]
+            mask = F.interpolate(mask[None].float(), size=x.shape[-2:]).to(torch.bool)[
+                0
+            ]
         pos = self.pe_layer(x, mask)
 
         src = x
-        hs, memory = self.transformer(self.input_proj(src), mask, self.query_embed.weight, pos)
+        hs, memory = self.transformer(
+            self.input_proj(src), mask, self.query_embed.weight, pos
+        )
 
         if self.mask_classification:
             outputs_class = self.class_embed(hs)
@@ -144,7 +146,9 @@ class StandardTransformerDecoder(nn.Module):
         if self.aux_loss:
             # [l, bs, queries, embed]
             mask_embed = self.mask_embed(hs)
-            outputs_seg_masks = torch.einsum("lbqc,bchw->lbqhw", mask_embed, mask_features)
+            outputs_seg_masks = torch.einsum(
+                "lbqc,bchw->lbqhw", mask_embed, mask_features
+            )
             out["pred_masks"] = outputs_seg_masks[-1]
             out["aux_outputs"] = self._set_aux_loss(
                 outputs_class if self.mask_classification else None, outputs_seg_masks
@@ -153,7 +157,9 @@ class StandardTransformerDecoder(nn.Module):
             # FIXME h_boxes takes the last one computed, keep this in mind
             # [bs, queries, embed]
             mask_embed = self.mask_embed(hs[-1])
-            outputs_seg_masks = torch.einsum("bqc,bchw->bqhw", mask_embed, mask_features)
+            outputs_seg_masks = torch.einsum(
+                "bqc,bchw->bqhw", mask_embed, mask_features
+            )
             out["pred_masks"] = outputs_seg_masks
         return out
 

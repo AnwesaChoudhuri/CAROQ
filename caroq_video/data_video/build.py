@@ -1,5 +1,3 @@
-
-
 import itertools
 import logging
 import torch.utils.data
@@ -16,6 +14,7 @@ from detectron2.data.dataset_mapper import DatasetMapper
 from detectron2.data.samplers import InferenceSampler, TrainingSampler
 from detectron2.utils.comm import get_world_size
 import pdb
+
 
 def _compute_num_images_per_worker(cfg: CfgNode):
     num_workers = get_world_size()
@@ -104,23 +103,30 @@ def get_detection_dataset_dicts(
 
     has_instances = "annotations" in dataset_dicts[0]
     if filter_empty and has_instances:
-        dataset_dicts = filter_images_with_only_crowd_annotations(dataset_dicts, dataset_names)
+        dataset_dicts = filter_images_with_only_crowd_annotations(
+            dataset_dicts, dataset_names
+        )
 
-    assert len(dataset_dicts), "No valid data found in {}.".format(",".join(dataset_names))
+    assert len(dataset_dicts), "No valid data found in {}.".format(
+        ",".join(dataset_names)
+    )
     print(train, subset)
-    if train==True:
-        if subset==True:
-            #return [k for k in dataset_dicts if k not in dataset_dicts[::5]] # train split
-            return dataset_dicts[:8]#[k for k in dataset_dicts if k["file_names"][0].find("77610860e0")>-1]#77610860e0, 20, 25, 30, 40
+    if train == True:
+        if subset == True:
+            # return [k for k in dataset_dicts if k not in dataset_dicts[::5]] # train split
+            return dataset_dicts[
+                :8
+            ]  # [k for k in dataset_dicts if k["file_names"][0].find("77610860e0")>-1]#77610860e0, 20, 25, 30, 40
         else:
             return dataset_dicts
     else:
-        if subset==True:
-            #return dataset_dicts[::5] # val split
-            return dataset_dicts[:8]#[k for k in dataset_dicts if k["file_names"][0].find("77610860e0")>-1]#77610860e0, 20, 25, 30, 40
+        if subset == True:
+            # return dataset_dicts[::5] # val split
+            return dataset_dicts[
+                :8
+            ]  # [k for k in dataset_dicts if k["file_names"][0].find("77610860e0")>-1]#77610860e0, 20, 25, 30, 40
         else:
             return dataset_dicts
-
 
 
 def _train_loader_from_config(cfg, mapper, *, dataset=None, sampler=None):
@@ -128,7 +134,11 @@ def _train_loader_from_config(cfg, mapper, *, dataset=None, sampler=None):
         dataset = get_detection_dataset_dicts(
             cfg.DATASETS.TRAIN,
             filter_empty=cfg.DATALOADER.FILTER_EMPTY_ANNOTATIONS,
-            proposal_files=cfg.DATASETS.PROPOSAL_FILES_TRAIN if cfg.MODEL.LOAD_PROPOSALS else None, train=True, subset=cfg.INPUT.SUBSET
+            proposal_files=cfg.DATASETS.PROPOSAL_FILES_TRAIN
+            if cfg.MODEL.LOAD_PROPOSALS
+            else None,
+            train=True,
+            subset=cfg.INPUT.SUBSET,
         )
 
     if mapper is None:
@@ -153,7 +163,13 @@ def _train_loader_from_config(cfg, mapper, *, dataset=None, sampler=None):
 # TODO can allow dataset as an iterable or IterableDataset to make this function more general
 @configurable(from_config=_train_loader_from_config)
 def build_detection_train_loader(
-    dataset, *, mapper, sampler=None, total_batch_size, aspect_ratio_grouping=True, num_workers=0
+    dataset,
+    *,
+    mapper,
+    sampler=None,
+    total_batch_size,
+    aspect_ratio_grouping=True,
+    num_workers=0
 ):
     """
     Build a dataloader for object detection with some default features.
@@ -207,14 +223,22 @@ def _test_loader_from_config(cfg, dataset_name, mapper=None):
         [dataset_name],
         filter_empty=False,
         proposal_files=[
-            cfg.DATASETS.PROPOSAL_FILES_TEST[list(cfg.DATASETS.TEST).index(dataset_name)]
+            cfg.DATASETS.PROPOSAL_FILES_TEST[
+                list(cfg.DATASETS.TEST).index(dataset_name)
+            ]
         ]
         if cfg.MODEL.LOAD_PROPOSALS
-        else None, train=False, subset=cfg.INPUT.SUBSET
+        else None,
+        train=False,
+        subset=cfg.INPUT.SUBSET,
     )
     if mapper is None:
         mapper = DatasetMapper(cfg, False)
-    return {"dataset": dataset, "mapper": mapper, "num_workers": cfg.DATALOADER.NUM_WORKERS}
+    return {
+        "dataset": dataset,
+        "mapper": mapper,
+        "num_workers": cfg.DATALOADER.NUM_WORKERS,
+    }
 
 
 @configurable(from_config=_test_loader_from_config)

@@ -17,11 +17,10 @@ import pdb
 from ..utils.misc import is_dist_avail_and_initialized, nested_tensor_from_tensor_list
 import time
 
+
 def dice_loss(
-        inputs: torch.Tensor,
-        targets: torch.Tensor,
-        num_masks: float,
-    ):
+    inputs: torch.Tensor, targets: torch.Tensor, num_masks: float,
+):
     """
     Compute the DICE loss, similar to generalized IOU for masks
     Args:
@@ -40,16 +39,12 @@ def dice_loss(
     return loss.sum() / num_masks
 
 
-dice_loss_jit = torch.jit.script(
-    dice_loss
-)  # type: torch.jit.ScriptModule
+dice_loss_jit = torch.jit.script(dice_loss)  # type: torch.jit.ScriptModule
 
 
 def sigmoid_ce_loss(
-        inputs: torch.Tensor,
-        targets: torch.Tensor,
-        num_masks: float,
-    ):
+    inputs: torch.Tensor, targets: torch.Tensor, num_masks: float,
+):
     """
     Args:
         inputs: A float tensor of arbitrary shape.
@@ -65,9 +60,7 @@ def sigmoid_ce_loss(
     return loss.mean(1).sum() / num_masks
 
 
-sigmoid_ce_loss_jit = torch.jit.script(
-    sigmoid_ce_loss
-)  # type: torch.jit.ScriptModule
+sigmoid_ce_loss_jit = torch.jit.script(sigmoid_ce_loss)  # type: torch.jit.ScriptModule
 
 
 def calculate_uncertainty(logits):
@@ -94,8 +87,19 @@ class SetCriterion(nn.Module):
         2) we supervise each pair of matched ground-truth / prediction (supervise class and box)
     """
 
-    def __init__(self, num_classes, matcher, weight_dict, eos_coef, losses,
-                 num_points, oversample_ratio, importance_sample_ratio, time_gap=5, ignore_value=10):
+    def __init__(
+        self,
+        num_classes,
+        matcher,
+        weight_dict,
+        eos_coef,
+        losses,
+        num_points,
+        oversample_ratio,
+        importance_sample_ratio,
+        time_gap=5,
+        ignore_value=10,
+    ):
         """Create the criterion.
         Parameters:
             num_classes: number of object categories, omitting the special no-object category
@@ -118,8 +122,8 @@ class SetCriterion(nn.Module):
         self.num_points = num_points
         self.oversample_ratio = oversample_ratio
         self.importance_sample_ratio = importance_sample_ratio
-        self.time_gap=time_gap
-        self.ignore_value=ignore_value
+        self.time_gap = time_gap
+        self.ignore_value = ignore_value
 
     def loss_labels(self, outputs, targets, indices, num_masks, keep_indices):
         """Classification loss (NLL)
@@ -131,18 +135,29 @@ class SetCriterion(nn.Module):
 
         idx = self._get_src_permutation_idx(indices)
 
-        target_classes_o = torch.cat([t_["labels"][J] for t_, (_, J) in zip(targets, indices)])
-        target_classes_o[target_classes_o==self.num_classes]=-100 # for mots/vps ambiguous category
+        target_classes_o = torch.cat(
+            [t_["labels"][J] for t_, (_, J) in zip(targets, indices)]
+        )
+        target_classes_o[
+            target_classes_o == self.num_classes
+        ] = -100  # for mots/vps ambiguous category
 
         target_classes = torch.full(
-            src_logits.shape[:2], self.num_classes, dtype=torch.int64, device=src_logits.device
+            src_logits.shape[:2],
+            self.num_classes,
+            dtype=torch.int64,
+            device=src_logits.device,
         )
         target_classes[idx] = target_classes_o
 
-        src_logits=src_logits.reshape(src_logits.shape[0]*src_logits.shape[1],-1)
-        target_classes=target_classes.reshape(target_classes.shape[0]*target_classes.shape[1])
+        src_logits = src_logits.reshape(src_logits.shape[0] * src_logits.shape[1], -1)
+        target_classes = target_classes.reshape(
+            target_classes.shape[0] * target_classes.shape[1]
+        )
 
-        loss_ce = F.cross_entropy(src_logits, target_classes, self.empty_weight, ignore_index=-100)
+        loss_ce = F.cross_entropy(
+            src_logits, target_classes, self.empty_weight, ignore_index=-100
+        )
         losses = {"loss_ce": loss_ce}
         return losses
 
@@ -156,71 +171,76 @@ class SetCriterion(nn.Module):
         tgt_idx = self._get_tgt_permutation_idx(indices)
 
         src_masks = outputs["pred_masks"]
-        bs_t, d1, d2, d3=src_masks.shape
-        bs=int(bs_t/self.time_gap)
-        src_masks=src_masks.reshape(bs, self.time_gap, d1, d2, d3).permute(0,2,1,3,4)
+        bs_t, d1, d2, d3 = src_masks.shape
+        bs = int(bs_t / self.time_gap)
+        src_masks = src_masks.reshape(bs, self.time_gap, d1, d2, d3).permute(
+            0, 2, 1, 3, 4
+        )
 
         src_masks = src_masks[src_idx]
 
-
-
-
-        masks = [k for t_ in targets for k in t_["masks"]]#[t_["masks"][k] for t_ in targets for k in range(len(t_["masks"])) if t_["labels"][k]!=ignore_label] #
-        #keep=[k.item() nt in (self.ignore_value, -100) for t_ in targets for k in t_["labels"]]
+        masks = [
+            k for t_ in targets for k in t_["masks"]
+        ]  # [t_["masks"][k] for t_ in targets for k in range(len(t_["masks"])) if t_["labels"][k]!=ignore_label] #
+        # keep=[k.item() nt in (self.ignore_value, -100) for t_ in targets for k in t_["labels"]]
 
         # TODO use valid to mask invalid areas due to padding in loss
         target_masks, valid = nested_tensor_from_tensor_list(masks).decompose()
         target_masks = target_masks.to(src_masks)
 
-        tmp=[0]#+[len([k for k in t["labels"]]) for t in targets]
+        tmp = [0]  # +[len([k for k in t["labels"]]) for t in targets]
         for t in targets:
-            tmp.append(len([k for k in t["labels"]])+tmp[-1])
+            tmp.append(len([k for k in t["labels"]]) + tmp[-1])
 
-        lngth=torch.tensor([tmp[i] for i,t in enumerate(targets) for r in t["labels"]])
-        target_masks = target_masks[tgt_idx[1]+lngth]
+        lngth = torch.tensor(
+            [tmp[i] for i, t in enumerate(targets) for r in t["labels"]]
+        )
+        target_masks = target_masks[tgt_idx[1] + lngth]
 
         # No need to upsample predictions as we are using normalized coordinates :)
         # N x 1 x H x W
 
-
-
-        #src_masks = src_masks[keep_indices[src_idx], None]
+        # src_masks = src_masks[keep_indices[src_idx], None]
         src_masks = src_masks[:, None]
-        src_masks=src_masks.flatten(2,3)
-        #target_masks = target_masks[keep_indices[src_idx], None]
+        src_masks = src_masks.flatten(2, 3)
+        # target_masks = target_masks[keep_indices[src_idx], None]
         target_masks = target_masks[:, None]
-        target_masks=target_masks.flatten(2,3)
+        target_masks = target_masks.flatten(2, 3)
 
         # keep_nonzero_target_masks=target_masks.sum(-1).sum(-1).sum(-1)!=0
         # target_masks=target_masks[keep_nonzero_target_masks]
         # src_masks=src_masks[keep_nonzero_target_masks]
 
+        # l_mask=0.
+        # l_dice=0.
 
-
-
-        #l_mask=0.
-        #l_dice=0.
-
-        #for id in range(src_masks.shape[2]):
-
+        # for id in range(src_masks.shape[2]):
 
         with torch.no_grad():
             # sample point_coords
             point_coords = get_uncertain_point_coords_with_randomness(
-                src_masks.float(),# src_masks[:,:,id].float(),
+                src_masks.float(),  # src_masks[:,:,id].float(),
                 lambda logits: calculate_uncertainty(logits),
                 self.num_points,
                 self.oversample_ratio,
                 self.importance_sample_ratio,
             )
             # get gt labels
-        point_labels = point_sample(target_masks,point_coords,align_corners=False,).squeeze(1)#target_masks[:,:,id].float()
+        point_labels = point_sample(
+            target_masks, point_coords, align_corners=False,
+        ).squeeze(
+            1
+        )  # target_masks[:,:,id].float()
 
-        point_logits = point_sample(src_masks.float(),point_coords,align_corners=False,).squeeze(1)#src_masks[:,:,id].float()
+        point_logits = point_sample(
+            src_masks.float(), point_coords, align_corners=False,
+        ).squeeze(
+            1
+        )  # src_masks[:,:,id].float()
 
-        #l_mask+=sigmoid_ce_loss_jit(point_logits, point_labels, num_masks)
+        # l_mask+=sigmoid_ce_loss_jit(point_logits, point_labels, num_masks)
 
-        #l_dice+=dice_loss_jit(point_logits, point_labels, num_masks)
+        # l_dice+=dice_loss_jit(point_logits, point_labels, num_masks)
 
         losses = {
             "loss_mask": sigmoid_ce_loss_jit(point_logits, point_labels, num_masks),
@@ -233,26 +253,29 @@ class SetCriterion(nn.Module):
 
     def _get_src_permutation_idx(self, indices):
         # permute predictions following indices
-        batch_idx = torch.cat([torch.full_like(src, i) for i, (src, _) in enumerate(indices)])
+        batch_idx = torch.cat(
+            [torch.full_like(src, i) for i, (src, _) in enumerate(indices)]
+        )
         src_idx = torch.cat([src for (src, _) in indices])
         return batch_idx, src_idx
 
     def _get_tgt_permutation_idx(self, indices):
         # permute targets following indices
-        batch_idx = torch.cat([torch.full_like(tgt, i) for i, (_, tgt) in enumerate(indices)])
+        batch_idx = torch.cat(
+            [torch.full_like(tgt, i) for i, (_, tgt) in enumerate(indices)]
+        )
         tgt_idx = torch.cat([tgt for (_, tgt) in indices])
         return batch_idx, tgt_idx
 
     def get_loss(self, loss, outputs, targets, indices, num_masks):
 
-        keep_indices=[]#self.remove_ignore_indices(outputs, targets)
+        keep_indices = []  # self.remove_ignore_indices(outputs, targets)
         loss_map = {
-            'labels': self.loss_labels,
-            'masks': self.loss_masks,
+            "labels": self.loss_labels,
+            "masks": self.loss_masks,
         }
         assert loss in loss_map, f"do you really want to compute {loss} loss?"
         return loss_map[loss](outputs, targets, indices, num_masks, keep_indices)
-
 
     def forward(self, outputs, targets):
         """This performs the loss computation.
@@ -263,63 +286,65 @@ class SetCriterion(nn.Module):
         """
         outputs_without_aux = {k: v for k, v in outputs.items() if k != "aux_outputs"}
 
-        #outputs_without_aux1, outputs_without_aux2=self.modify_outputs(outputs_without_aux)
-
-
+        # outputs_without_aux1, outputs_without_aux2=self.modify_outputs(outputs_without_aux)
 
         # Retrieve the matching between the outputs of the last layer and the targets
 
+        targets_new = self.split_targets(targets)
 
-        targets_new=self.split_targets(targets)
+        indices = self.new_matcher2(outputs_without_aux, targets, targets_new)
+        # indices=self.matcher(outputs_without_aux, targets)
 
-        indices=self.new_matcher2(outputs_without_aux, targets, targets_new)
-        #indices=self.matcher(outputs_without_aux, targets)
-
-        #indices = self.new_matcher(outputs_without_aux1, outputs_without_aux2, targets_new) #repeats indices from self.matcher
+        # indices = self.new_matcher(outputs_without_aux1, outputs_without_aux2, targets_new) #repeats indices from self.matcher
 
         # Compute the average number of target boxes accross all nodes, for normalization purposes
         num_masks = sum(len(t_["labels"]) for t_ in targets)
         num_masks = torch.as_tensor(
-            [num_masks], dtype=torch.float, device=outputs["pred_masks"].device #device=next(iter(outputs.values())).device
+            [num_masks],
+            dtype=torch.float,
+            device=outputs[
+                "pred_masks"
+            ].device,  # device=next(iter(outputs.values())).device
         )
         if is_dist_avail_and_initialized():
             torch.distributed.all_reduce(num_masks)
         num_masks = torch.clamp(num_masks / get_world_size(), min=1).item()
 
         # Compute all the requested losses
-        #print("others: ", time.time()-t1)
+        # print("others: ", time.time()-t1)
         losses = {}
         for loss in self.losses:
-            losses.update(self.get_loss(loss, outputs, targets_new.copy(), indices.copy(), num_masks))
-
+            losses.update(
+                self.get_loss(
+                    loss, outputs, targets_new.copy(), indices.copy(), num_masks
+                )
+            )
 
         # scores1, labels1 = F.softmax(outputs["pred_logits"], dim=-1).max(-1)
         # keep1 = labels1.ne(2) & (scores1 > 0.8)
-        #print(labels1[keep1])
-
-
+        # print(labels1[keep1])
 
         # tmp_masks=outputs["pred_masks"][torch.stack([keep1, keep1]).permute(1,0,2).flatten(0,1)]
         # if tmp_masks.shape[0]>0:
         #     save_image(tmp_masks.unsqueeze(1), fp= "match/src_"+str(time.time())+".png", padding=1, pad_value=1)
 
-
-
         # In case of auxiliary losses, we repeat this process with the output of each intermediate layer.
         if "aux_outputs" in outputs:
             for i, aux_outputs in enumerate(outputs["aux_outputs"]):
 
-                #aux_outputs1, aux_outputs2=self.modify_outputs(aux_outputs)
-                indices=self.new_matcher2(aux_outputs, targets, targets_new)
-                #indices=self.matcher(aux_outputs, targets)
+                # aux_outputs1, aux_outputs2=self.modify_outputs(aux_outputs)
+                indices = self.new_matcher2(aux_outputs, targets, targets_new)
+                # indices=self.matcher(aux_outputs, targets)
 
-                #indices = self.new_matcher(aux_outputs1, aux_outputs2, targets_new)
+                # indices = self.new_matcher(aux_outputs1, aux_outputs2, targets_new)
 
                 for loss in self.losses:
-                    l_dict = self.get_loss(loss, aux_outputs, targets_new.copy(), indices.copy(), num_masks)
+                    l_dict = self.get_loss(
+                        loss, aux_outputs, targets_new.copy(), indices.copy(), num_masks
+                    )
                     l_dict = {k + f"_{i}": v for k, v in l_dict.items()}
                     losses.update(l_dict)
-            #print("aux: ", time.time()-t1)
+            # print("aux: ", time.time()-t1)
 
         return losses
 
@@ -327,7 +352,7 @@ class SetCriterion(nn.Module):
 
         ind1 = self.matcher(outputs, targets, targets_new)
 
-        indices=[]
+        indices = []
         for i1 in ind1:
 
             indices.append(i1)
@@ -338,10 +363,10 @@ class SetCriterion(nn.Module):
     def new_matcher(self, outputs1, outputs2, targets):
         ind1 = self.matcher(outputs1, targets[::2])
         ind2 = self.matcher(outputs2, targets[1::2])
-        #in_1= [list(set(i1[1].tolist())-set(i2[1].tolist())) for (i1,i2) in zip(ind1, ind2)]
+        # in_1= [list(set(i1[1].tolist())-set(i2[1].tolist())) for (i1,i2) in zip(ind1, ind2)]
 
-        indices=[]
-        for (i1,i2) in zip(ind1, ind2):
+        indices = []
+        for (i1, i2) in zip(ind1, ind2):
 
             indices.append(i1)
             indices.append(i1)
@@ -360,29 +385,34 @@ class SetCriterion(nn.Module):
 
     def modify_outputs(self, outputs):
 
-        bs_t, c, h,w= outputs["pred_masks"].shape
-        outputs1={}
-        outputs2={}
-        outputs1["pred_masks"]=outputs["pred_masks"].reshape(outputs["pred_logits"].shape[0], -1, c, h, w)[::2].flatten(0,1)
-        outputs2["pred_masks"]=outputs["pred_masks"].reshape(outputs["pred_logits"].shape[0], -1, c, h, w)[1::2].flatten(0,1)
+        bs_t, c, h, w = outputs["pred_masks"].shape
+        outputs1 = {}
+        outputs2 = {}
+        outputs1["pred_masks"] = (
+            outputs["pred_masks"]
+            .reshape(outputs["pred_logits"].shape[0], -1, c, h, w)[::2]
+            .flatten(0, 1)
+        )
+        outputs2["pred_masks"] = (
+            outputs["pred_masks"]
+            .reshape(outputs["pred_logits"].shape[0], -1, c, h, w)[1::2]
+            .flatten(0, 1)
+        )
 
-        outputs1["pred_logits"]=outputs["pred_logits"][::2]
-        outputs2["pred_logits"]=outputs["pred_logits"][1::2]
-
+        outputs1["pred_logits"] = outputs["pred_logits"][::2]
+        outputs2["pred_logits"] = outputs["pred_logits"][1::2]
 
         return outputs1, outputs2
 
-
-    def split_targets(self,targets):
-        targets_new=[]
+    def split_targets(self, targets):
+        targets_new = []
 
         for target in targets:
-            masks=torch.split(target["masks"], self.time_gap, dim=1)
+            masks = torch.split(target["masks"], self.time_gap, dim=1)
             for msks in masks:
-                lbls=target["labels"].clone()
-                lbls[msks.sum(-1).sum(-1).sum(-1)==0]=-100#self.num_classes#
+                lbls = target["labels"].clone()
+                lbls[msks.sum(-1).sum(-1).sum(-1) == 0] = -100  # self.num_classes#
                 targets_new.append({"labels": lbls, "masks": msks})
-
 
         return targets_new
 
@@ -404,24 +434,36 @@ class SetCriterion(nn.Module):
 
     def remove_ignore_indices(self, outputs, targets):
 
-        bs_t, d1, d2, d3=outputs["pred_masks"].shape
-        bs=int(bs_t/self.time_gap)
-        ops=[op.permute(1,0,2,3) for op in outputs["pred_masks"].reshape(bs,self.time_gap,d1,d2,d3)]
+        bs_t, d1, d2, d3 = outputs["pred_masks"].shape
+        bs = int(bs_t / self.time_gap)
+        ops = [
+            op.permute(1, 0, 2, 3)
+            for op in outputs["pred_masks"].reshape(bs, self.time_gap, d1, d2, d3)
+        ]
 
-        ignore_label_indices=[[k.item() in (self.ignore_value, -100) for k in t_["labels"]] for t_ in targets]
+        ignore_label_indices = [
+            [k.item() in (self.ignore_value, -100) for k in t_["labels"]]
+            for t_ in targets
+        ]
 
-        ignore_masks=[F.interpolate(t_["masks"][ignore_label], [d2, d3]) if True in ignore_label else torch.zeros(1,self.time_gap,d2,d3).to(outputs["pred_masks"]) for t_, ignore_label in zip(targets,ignore_label_indices)]
+        ignore_masks = [
+            F.interpolate(t_["masks"][ignore_label], [d2, d3])
+            if True in ignore_label
+            else torch.zeros(1, self.time_gap, d2, d3).to(outputs["pred_masks"])
+            for t_, ignore_label in zip(targets, ignore_label_indices)
+        ]
 
+        # normalized_product=[(ignore_masks[ct]*(ops[ct]>0.5).float()).sum(1).sum(1).sum(1)/((ops[ct]>0.5).float().sum(1).sum(1).sum(1)+0.000000001) for ct in range(bs)]
 
-        #normalized_product=[(ignore_masks[ct]*(ops[ct]>0.5).float()).sum(1).sum(1).sum(1)/((ops[ct]>0.5).float().sum(1).sum(1).sum(1)+0.000000001) for ct in range(bs)]
+        # keep_indices=[pr<0.5 for pr in normalized_product] # keep indices with low match with ignore regions
 
-        #keep_indices=[pr<0.5 for pr in normalized_product] # keep indices with low match with ignore regions
-
-        keep_indices=[]
+        keep_indices = []
         for ct in range(len(targets)):
-            n_prod=[(igm*(ops[ct]>0.5).float()).sum(1).sum(1).sum(1)/((ops[ct]>0.5).float().sum(1).sum(1).sum(1)+0.000000001) for igm in ignore_masks[ct]]
-            keep_indices.append((torch.stack(n_prod)<0.5).sum(0).bool())
-
-
+            n_prod = [
+                (igm * (ops[ct] > 0.5).float()).sum(1).sum(1).sum(1)
+                / ((ops[ct] > 0.5).float().sum(1).sum(1).sum(1) + 0.000000001)
+                for igm in ignore_masks[ct]
+            ]
+            keep_indices.append((torch.stack(n_prod) < 0.5).sum(0).bool())
 
         return torch.stack(keep_indices)

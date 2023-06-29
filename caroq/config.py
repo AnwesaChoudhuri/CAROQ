@@ -20,16 +20,16 @@ def add_maskformer2_config(cfg):
     cfg.INPUT.SIZE_DIVISIBILITY = -1
 
     # dataset config for mots evaluation
-    cfg.TEST.GT_DIR="."
-    cfg.TEST.OUTPUT_DIR="."
-    cfg.TEST.EVAL_MODE="."
-    cfg.TEST.SEQMAP="."
+    cfg.TEST.GT_DIR = "."
+    cfg.TEST.OUTPUT_DIR = "."
+    cfg.TEST.EVAL_MODE = "."
+    cfg.TEST.SEQMAP = "."
 
     # config for sailvos
-    cfg.DATASETS.FOLDER="."
-    cfg.DATASETS.TRAIN_FILE="."
-    cfg.DATASETS.VAL_FILE="."
-    cfg.DATASETS.VAL_FILE_EVAL="."
+    cfg.DATASETS.FOLDER = "."
+    cfg.DATASETS.TRAIN_FILE = "."
+    cfg.DATASETS.VAL_FILE = "."
+    cfg.DATASETS.VAL_FILE_EVAL = "."
 
     # solver config
     # weight decay on embedding
@@ -96,7 +96,7 @@ def add_maskformer2_config(cfg):
     cfg.MODEL.SWIN.WINDOW_SIZE = 7
     cfg.MODEL.SWIN.MLP_RATIO = 4.0
     cfg.MODEL.SWIN.QKV_BIAS = True
-    cfg.MODEL.SWIN.QK_SCALE = ""#None
+    cfg.MODEL.SWIN.QK_SCALE = ""  # None
     cfg.MODEL.SWIN.DROP_RATE = 0.0
     cfg.MODEL.SWIN.ATTN_DROP_RATE = 0.0
     cfg.MODEL.SWIN.DROP_PATH_RATE = 0.3
@@ -107,7 +107,9 @@ def add_maskformer2_config(cfg):
 
     # NOTE: maskformer2 extra configs
     # transformer module
-    cfg.MODEL.MASK_FORMER.TRANSFORMER_DECODER_NAME = "MultiScaleMaskedTransformerDecoder"
+    cfg.MODEL.MASK_FORMER.TRANSFORMER_DECODER_NAME = (
+        "MultiScaleMaskedTransformerDecoder"
+    )
     cfg.MODEL.MASK_FORMER.POSITIONAL_ENCODING = "3D"
 
     # LSJ aug
@@ -119,10 +121,14 @@ def add_maskformer2_config(cfg):
     cfg.INPUT.SAMPLING_FRAME_NUM = 2
     cfg.INPUT.SAMPLING_FRAME_RANGE = 20
     cfg.INPUT.SAMPLING_FRAME_SHUFFLE = False
-    cfg.INPUT.AUGMENTATIONS = [] # "brightness", "contrast", "saturation",
+    cfg.INPUT.AUGMENTATIONS = []  # "brightness", "contrast", "saturation",
 
     # MSDeformAttn encoder configs
-    cfg.MODEL.SEM_SEG_HEAD.DEFORMABLE_TRANSFORMER_ENCODER_IN_FEATURES = ["res3", "res4", "res5"]
+    cfg.MODEL.SEM_SEG_HEAD.DEFORMABLE_TRANSFORMER_ENCODER_IN_FEATURES = [
+        "res3",
+        "res4",
+        "res5",
+    ]
     cfg.MODEL.SEM_SEG_HEAD.DEFORMABLE_TRANSFORMER_ENCODER_N_POINTS = 4
     cfg.MODEL.SEM_SEG_HEAD.DEFORMABLE_TRANSFORMER_ENCODER_N_HEADS = 8
 

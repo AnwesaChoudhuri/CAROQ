@@ -1,4 +1,3 @@
-
 from typing import Tuple
 
 import torch
@@ -21,7 +20,10 @@ import pdb
 import cv2
 from mask_former import file_helper, mots_helper
 
-TrackElement = namedtuple("TrackElement", ["t", "box", "track_id", "class_", "mask", "score"])
+TrackElement = namedtuple(
+    "TrackElement", ["t", "box", "track_id", "class_", "mask", "score"]
+)
+
 
 @META_ARCH_REGISTRY.register()
 class MaskFormer(nn.Module):
@@ -81,7 +83,9 @@ class MaskFormer(nn.Module):
             size_divisibility = self.backbone.size_divisibility
         self.size_divisibility = size_divisibility
         self.sem_seg_postprocess_before_inference = sem_seg_postprocess_before_inference
-        self.register_buffer("pixel_mean", torch.Tensor(pixel_mean).view(-1, 1, 1), False)
+        self.register_buffer(
+            "pixel_mean", torch.Tensor(pixel_mean).view(-1, 1, 1), False
+        )
         self.register_buffer("pixel_std", torch.Tensor(pixel_std).view(-1, 1, 1), False)
 
     @classmethod
@@ -97,9 +101,7 @@ class MaskFormer(nn.Module):
 
         # building criterion
         matcher = HungarianMatcher(
-            cost_class=1,
-            cost_mask=mask_weight,
-            cost_dice=dice_weight,
+            cost_class=1, cost_mask=mask_weight, cost_dice=dice_weight,
         )
 
         weight_dict = {"loss_ce": 1, "loss_mask": mask_weight, "loss_dice": dice_weight}
@@ -169,36 +171,34 @@ class MaskFormer(nn.Module):
                         Each dict contains keys "id", "category_id", "isthing".
         """
 
-
         images = [x["image"].to(self.device).squeeze(0) for x in batched_inputs]
 
         abc = [x["name"] for x in batched_inputs]
-        names= [a for b in abc for a in b]
+        names = [a for b in abc for a in b]
 
         images = [(x - self.pixel_mean) / self.pixel_std for x in images]
         images = ImageList.from_tensors(images, self.size_divisibility)
 
-
-        c, h, w =images.tensor.shape[-3:]
-        time_gap=5
+        c, h, w = images.tensor.shape[-3:]
+        time_gap = 5
 
         if self.training:
-            features = self.backbone(images.tensor.reshape(-1, c, h,w))
+            features = self.backbone(images.tensor.reshape(-1, c, h, w))
             outputs = self.sem_seg_head(features)
             torch.cuda.empty_cache()
             # mask classification target
             if "instances" in batched_inputs[0]:
                 gt_instances = [x["instances"] for x in batched_inputs]
-                #print("prepare target")
+                # print("prepare target")
                 targets = self.prepare_targets(gt_instances, images)
 
-                 #targets = [x["instances"] for x in batched_inputs]
+                # targets = [x["instances"] for x in batched_inputs]
             else:
                 targets = None
 
             # bipartite matching-based
 
-            #print("loss calculate")
+            # print("loss calculate")
             losses = self.criterion(outputs, targets, len(batched_inputs))
 
             for k in list(losses.keys()):
@@ -211,13 +211,13 @@ class MaskFormer(nn.Module):
             return losses
 
         else:
-            all_tracks=[]
-            ct=0
-            imgs=images.tensor.reshape(-1, time_gap, c, h,w)
+            all_tracks = []
+            ct = 0
+            imgs = images.tensor.reshape(-1, time_gap, c, h, w)
             for img in imgs:
                 features = self.backbone(img)
                 outputs = self.sem_seg_head(features)
-                #features, outputs= self.get_split_inference(imgs)
+                # features, outputs= self.get_split_inference(imgs)
 
                 mask_cls_results = outputs["pred_logits"]
                 mask_pred_results = outputs["pred_masks"]
@@ -229,53 +229,53 @@ class MaskFormer(nn.Module):
                     align_corners=False,
                 )
 
-
-                #processed_results = []
-                image_size=batched_inputs[0]["image"].shape[-2:]
+                # processed_results = []
+                image_size = batched_inputs[0]["image"].shape[-2:]
 
                 height = image_size[0]
                 width = image_size[1]
 
-
                 for i, mask_pred_result in enumerate(mask_pred_results):
 
-                    mask_cls_result=mask_cls_results[int(i/5)]
+                    mask_cls_result = mask_cls_results[int(i / 5)]
 
                     if self.sem_seg_postprocess_before_inference:
-                        mask_pred_result = sem_seg_postprocess(mask_pred_result, image_size, height, width)
+                        mask_pred_result = sem_seg_postprocess(
+                            mask_pred_result, image_size, height, width
+                        )
 
-                    tracks = self.mots_inference(mask_cls_result, mask_pred_result, t=int(names[ct][:-4]))
+                    tracks = self.mots_inference(
+                        mask_cls_result, mask_pred_result, t=int(names[ct][:-4])
+                    )
                     all_tracks.append(tracks)
-                    ct+=1
-
-
+                    ct += 1
 
             hyp_tracks = mots_helper.make_disjoint(all_tracks, "score")
-            file_helper.export_tracking_result_in_kitti_format("0002", hyp_tracks, True, "",
-                                                   out_folder=outfolder)
+            file_helper.export_tracking_result_in_kitti_format(
+                "0002", hyp_tracks, True, "", out_folder=outfolder
+            )
 
             return all_tracks
 
-
     def get_split_inference(self, imgs):
 
-        outputs={}
-        features={}
+        outputs = {}
+        features = {}
         for it, im in enumerate(imgs):
             tmp_features = self.backbone(im)
             for k in tmp_features.keys():
-                if it==0:
-                    features[k]=tmp_features[k]
+                if it == 0:
+                    features[k] = tmp_features[k]
                 else:
-                    features[k]=torch.cat([features[k], tmp_features[k]])
+                    features[k] = torch.cat([features[k], tmp_features[k]])
 
             tmp_outputs = self.sem_seg_head(tmp_features)
             for k in tmp_outputs.keys():
-                if k!="aux_outputs":
-                    if it==0:
-                        outputs[k]=tmp_outputs[k]
+                if k != "aux_outputs":
+                    if it == 0:
+                        outputs[k] = tmp_outputs[k]
                     else:
-                        outputs[k]=torch.cat([outputs[k], tmp_outputs[k]])
+                        outputs[k] = torch.cat([outputs[k], tmp_outputs[k]])
 
         return features, outputs
 
@@ -283,36 +283,43 @@ class MaskFormer(nn.Module):
         h, w = images.tensor.shape[-2:]
         new_targets = []
         for targets_per_image_chunk in targets:
-            target_ids=list(np.unique([tg["track_id"] for tgt in targets_per_image_chunk for tg in tgt]))
-            gt_masks_per_chunk=[]
-            lbls_per_chunk=[]
+            target_ids = list(
+                np.unique(
+                    [tg["track_id"] for tgt in targets_per_image_chunk for tg in tgt]
+                )
+            )
+            gt_masks_per_chunk = []
+            lbls_per_chunk = []
             for t_id in target_ids:
-                gt_masks_unique=[]
+                gt_masks_unique = []
                 for tgt in targets_per_image_chunk:
-                    gtm=torch.tensor([tg["segmentation"] for tg in tgt if tg["track_id"]==t_id]).squeeze(0).to(images.device)
-                    if len(gtm)==0:
-                        gtm=torch.zeros(h, w).to(images.device)
+                    gtm = (
+                        torch.tensor(
+                            [tg["segmentation"] for tg in tgt if tg["track_id"] == t_id]
+                        )
+                        .squeeze(0)
+                        .to(images.device)
+                    )
+                    if len(gtm) == 0:
+                        gtm = torch.zeros(h, w).to(images.device)
                     else:
-                        lbls=torch.tensor([tg["category_id"] for tg in tgt if tg["track_id"]==t_id])
+                        lbls = torch.tensor(
+                            [tg["category_id"] for tg in tgt if tg["track_id"] == t_id]
+                        )
                     gt_masks_unique.append(gtm)
                 gt_masks_per_chunk.append(torch.stack(gt_masks_unique))
                 lbls_per_chunk.append(lbls)
 
-
-
-            gt_masks=torch.stack(gt_masks_per_chunk)
-            labels=torch.stack(lbls_per_chunk).squeeze(-1)
+            gt_masks = torch.stack(gt_masks_per_chunk)
+            labels = torch.stack(lbls_per_chunk).squeeze(-1)
             # pad gt
-            #gt_masks = targets_per_image.gt_masks
+            # gt_masks = targets_per_image.gt_masks
 
             # gt_masks = torch.stack([t["segmentation"].squeeze(0) for t in targets_per_image])
             # padded_masks = torch.zeros((gt_masks.shape[0], h, w), dtype=gt_masks.dtype, device=images.device)
             # padded_masks[:, : gt_masks.shape[1], : gt_masks.shape[2]] = gt_masks
             new_targets.append(
-                {
-                    "labels": labels.to(images.device),
-                    "masks": gt_masks,
-                }
+                {"labels": labels.to(images.device), "masks": gt_masks,}
             )
         return new_targets
 
@@ -326,7 +333,9 @@ class MaskFormer(nn.Module):
         scores, labels = F.softmax(mask_cls, dim=-1).max(-1)
         mask_pred = mask_pred.sigmoid()
 
-        keep = labels.ne(self.sem_seg_head.num_classes) & (scores > self.object_mask_threshold)
+        keep = labels.ne(self.sem_seg_head.num_classes) & (
+            scores > self.object_mask_threshold
+        )
         cur_scores = scores[keep]
         cur_classes = labels[keep]
         cur_masks = mask_pred[keep]
@@ -336,48 +345,57 @@ class MaskFormer(nn.Module):
         cur_prob_masks = cur_scores.view(-1, 1, 1) * cur_masks
 
         h, w = cur_masks.shape[-2:]
-        #panoptic_seg = torch.zeros((h, w), dtype=torch.int32, device=cur_masks.device)
+        # panoptic_seg = torch.zeros((h, w), dtype=torch.int32, device=cur_masks.device)
         segments_info = []
 
         current_segment_id = 0
 
         for im in range(len(cur_masks)):
-            cv2.imwrite("masks/mask"+str(im)+"_label"+str(cur_classes[im].item())+"_score"+str(cur_scores[im].item())+".png",cur_masks[im].cpu().numpy()*255)
-
+            cv2.imwrite(
+                "masks/mask"
+                + str(im)
+                + "_label"
+                + str(cur_classes[im].item())
+                + "_score"
+                + str(cur_scores[im].item())
+                + ".png",
+                cur_masks[im].cpu().numpy() * 255,
+            )
 
         if cur_masks.shape[0] == 0:
             # We didn't detect any mask :(
             return segments_info
         else:
             # take argmax
-            #cur_mask_ids = cur_prob_masks.argmax(0)
-            #stuff_memory_list = {}
+            # cur_mask_ids = cur_prob_masks.argmax(0)
+            # stuff_memory_list = {}
             for k in range(cur_classes.shape[0]):
                 pred_class = cur_classes[k].item()
-                #isthing = pred_class in self.metadata.thing_dataset_id_to_contiguous_id.values()
+                # isthing = pred_class in self.metadata.thing_dataset_id_to_contiguous_id.values()
                 mask = cur_masks[k].cpu().numpy()
                 area = (cur_masks[k] >= 0.5).sum().item()
                 current_segment_id += 1
 
+                if area > 0:
 
-                if area > 0 :
-
-                    encoded_mask=cocomask.encode(np.asfortranarray((mask > 0.5).astype(np.uint8)))
-                    if int(pred_class)==0:
-                        cls_id=1 #car
-                    elif int(pred_class)==1:
-                        cls_id=2 #person
+                    encoded_mask = cocomask.encode(
+                        np.asfortranarray((mask > 0.5).astype(np.uint8))
+                    )
+                    if int(pred_class) == 0:
+                        cls_id = 1  # car
+                    elif int(pred_class) == 1:
+                        cls_id = 2  # person
                     else:
-                        cls_id=10
-                    if cls_id in (1,2):
+                        cls_id = 10
+                    if cls_id in (1, 2):
                         segments_info.append(
                             TrackElement(
                                 t=t,
                                 box=cocomask.toBbox(encoded_mask),
-                                track_id= current_segment_id,
+                                track_id=current_segment_id,
                                 mask=encoded_mask,
-                                class_= cls_id,
-                                score=cur_scores[k].item()
+                                class_=cls_id,
+                                score=cur_scores[k].item(),
                             )
                         )
 

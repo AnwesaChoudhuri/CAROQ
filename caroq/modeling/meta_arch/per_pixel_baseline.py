@@ -10,7 +10,9 @@ from detectron2.config import configurable
 from detectron2.layers import Conv2d, ShapeSpec, get_norm
 from detectron2.modeling import SEM_SEG_HEADS_REGISTRY
 
-from ..transformer_decoder.maskformer_transformer_decoder import StandardTransformerDecoder
+from ..transformer_decoder.maskformer_transformer_decoder import (
+    StandardTransformerDecoder,
+)
 from ..pixel_decoder.fpn import build_pixel_decoder
 
 
@@ -20,7 +22,14 @@ class PerPixelBaselineHead(nn.Module):
     _version = 2
 
     def _load_from_state_dict(
-        self, state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs
+        self,
+        state_dict,
+        prefix,
+        local_metadata,
+        strict,
+        missing_keys,
+        unexpected_keys,
+        error_msgs,
     ):
         version = local_metadata.get("version", None)
         if version is None or version < 2:
@@ -83,7 +92,9 @@ class PerPixelBaselineHead(nn.Module):
     def from_config(cls, cfg, input_shape: Dict[str, ShapeSpec]):
         return {
             "input_shape": {
-                k: v for k, v in input_shape.items() if k in cfg.MODEL.SEM_SEG_HEAD.IN_FEATURES
+                k: v
+                for k, v in input_shape.items()
+                if k in cfg.MODEL.SEM_SEG_HEAD.IN_FEATURES
             },
             "ignore_value": cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE,
             "num_classes": cfg.MODEL.SEM_SEG_HEAD.NUM_CLASSES,
@@ -112,9 +123,14 @@ class PerPixelBaselineHead(nn.Module):
         return x
 
     def losses(self, predictions, targets):
-        predictions = predictions.float()  # https://github.com/pytorch/pytorch/issues/48163
+        predictions = (
+            predictions.float()
+        )  # https://github.com/pytorch/pytorch/issues/48163
         predictions = F.interpolate(
-            predictions, scale_factor=self.common_stride, mode="bilinear", align_corners=False
+            predictions,
+            scale_factor=self.common_stride,
+            mode="bilinear",
+            align_corners=False,
         )
         loss = F.cross_entropy(
             predictions, targets, reduction="mean", ignore_index=self.ignore_value
@@ -126,7 +142,14 @@ class PerPixelBaselineHead(nn.Module):
 @SEM_SEG_HEADS_REGISTRY.register()
 class PerPixelBaselinePlusHead(PerPixelBaselineHead):
     def _load_from_state_dict(
-        self, state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs
+        self,
+        state_dict,
+        prefix,
+        local_metadata,
+        strict,
+        missing_keys,
+        unexpected_keys,
+        error_msgs,
     ):
         version = local_metadata.get("version", None)
         if version is None or version < 2:
@@ -229,14 +252,20 @@ class PerPixelBaselinePlusHead(PerPixelBaselineHead):
             return x, {}
 
     def layers(self, features):
-        mask_features, transformer_encoder_features, _ = self.pixel_decoder.forward_features(features)
+        (
+            mask_features,
+            transformer_encoder_features,
+            _,
+        ) = self.pixel_decoder.forward_features(features)
         if self.transformer_in_feature == "transformer_encoder":
             assert (
                 transformer_encoder_features is not None
             ), "Please use the TransformerEncoderPixelDecoder."
             predictions = self.predictor(transformer_encoder_features, mask_features)
         else:
-            predictions = self.predictor(features[self.transformer_in_feature], mask_features)
+            predictions = self.predictor(
+                features[self.transformer_in_feature], mask_features
+            )
         if self.deep_supervision:
             return predictions["pred_masks"], predictions["aux_outputs"]
         else:

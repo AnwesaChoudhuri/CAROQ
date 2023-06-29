@@ -1,5 +1,3 @@
-
-
 import contextlib
 import io
 import json
@@ -18,32 +16,204 @@ This file contains functions to parse YTVIS dataset of
 COCO-format annotations into dicts in "Detectron2 format".
 """
 
-#from detectron2.data.datasets.builtin_meta import CITYSCAPES_CATEGORIES as CITYSCAPES_VPS_CATEGORIES
+# from detectron2.data.datasets.builtin_meta import CITYSCAPES_CATEGORIES as CITYSCAPES_VPS_CATEGORIES
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["load_vps_json", "register_vps_instances"]
 
-CITYSCAPES_VPS_CATEGORIES= [
-    {'id': 0, 'name': 'road', 'supercategory': 'flat', 'isthing': 0, 'instance_eval': 0, 'trainid': 0, 'ori_id': 7, 'color': [128, 64, 128]},
-    {'id': 1, 'name': 'sidewalk', 'supercategory': 'flat', 'isthing': 0, 'instance_eval': 0, 'trainid': 1, 'ori_id': 8, 'color': [244, 35, 232]},
-    {'id': 2, 'name': 'building', 'supercategory': 'construction', 'isthing': 0, 'instance_eval': 0, 'trainid': 2, 'ori_id': 11, 'color': [70, 70, 70]},
-    {'id': 3, 'name': 'wall', 'supercategory': 'construction', 'isthing': 0, 'instance_eval': 0, 'trainid': 3, 'ori_id': 12, 'color': [102, 102, 156]},
-    {'id': 4, 'name': 'fence', 'supercategory': 'construction', 'isthing': 0, 'instance_eval': 0, 'trainid': 4, 'ori_id': 13, 'color': [190, 153, 153]},
-    {'id': 5, 'name': 'pole', 'supercategory': 'object', 'isthing': 0, 'instance_eval': 0, 'trainid': 5, 'ori_id': 17, 'color': [153, 153, 153]},
-    {'id': 6, 'name': 'traffic light', 'supercategory': 'object', 'isthing': 0, 'instance_eval': 0, 'trainid': 6, 'ori_id': 19, 'color': [250, 170, 30]},
-    {'id': 7, 'name': 'traffic sign', 'supercategory': 'object', 'isthing': 0, 'instance_eval': 0, 'trainid': 7, 'ori_id': 21, 'color': [220, 220, 0]},
-    {'id': 8, 'name': 'vegitation', 'supercategory': 'nature', 'isthing': 0, 'instance_eval': 0, 'trainid': 8, 'ori_id': 21, 'color': [107, 142, 35]},
-    {'id': 9, 'name': 'terrain', 'supercategory': 'nature', 'isthing': 0, 'instance_eval': 0, 'trainid': 9, 'ori_id': 22, 'color': [152, 251, 152]},
-    {'id': 10, 'name': 'sky', 'supercategory': 'sky', 'isthing': 0, 'instance_eval': 0, 'trainid': 10, 'ori_id': 23, 'color': [70, 130, 180]},
-    {'id': 11, 'name': 'person', 'supercategory': 'human', 'isthing': 1, 'instance_eval': 1, 'trainid': 11, 'ori_id': 24, 'color': [220, 20, 60]},
-    {'id': 12, 'name': 'rider', 'supercategory': 'human', 'isthing': 1, 'instance_eval': 1, 'trainid': 12, 'ori_id': 25, 'color': [255, 0, 0]},
-    {'id': 13, 'name': 'car', 'supercategory': 'vehicle', 'isthing': 1, 'instance_eval': 1, 'trainid': 13, 'ori_id': 26, 'color': [0, 0, 142]},
-    {'id': 14, 'name': 'truck', 'supercategory': 'vehicle', 'isthing': 1, 'instance_eval': 1, 'trainid': 14, 'ori_id': 27, 'color': [0, 0, 70]},
-    {'id': 15, 'name': 'bus', 'supercategory': 'vehicle', 'isthing': 1, 'instance_eval': 1, 'trainid': 15, 'ori_id': 28, 'color': [0, 60, 100]},
-    {'id': 16, 'name': 'train', 'supercategory': 'vehicle', 'isthing': 1, 'instance_eval': 1, 'trainid': 16, 'ori_id': 31, 'color': [0, 80, 100]},
-    {'id': 17, 'name': 'motorcycle', 'supercategory': 'vehicle', 'isthing': 1, 'instance_eval': 1, 'trainid': 17, 'ori_id': 32, 'color': [0, 0, 230]},
-    {'id': 18, 'name': 'bicycle', 'supercategory': 'vehicle', 'isthing': 1, 'instance_eval': 1, 'trainid': 18, 'ori_id': 33, 'color': [119, 11, 32]}]
+CITYSCAPES_VPS_CATEGORIES = [
+    {
+        "id": 0,
+        "name": "road",
+        "supercategory": "flat",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 0,
+        "ori_id": 7,
+        "color": [128, 64, 128],
+    },
+    {
+        "id": 1,
+        "name": "sidewalk",
+        "supercategory": "flat",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 1,
+        "ori_id": 8,
+        "color": [244, 35, 232],
+    },
+    {
+        "id": 2,
+        "name": "building",
+        "supercategory": "construction",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 2,
+        "ori_id": 11,
+        "color": [70, 70, 70],
+    },
+    {
+        "id": 3,
+        "name": "wall",
+        "supercategory": "construction",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 3,
+        "ori_id": 12,
+        "color": [102, 102, 156],
+    },
+    {
+        "id": 4,
+        "name": "fence",
+        "supercategory": "construction",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 4,
+        "ori_id": 13,
+        "color": [190, 153, 153],
+    },
+    {
+        "id": 5,
+        "name": "pole",
+        "supercategory": "object",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 5,
+        "ori_id": 17,
+        "color": [153, 153, 153],
+    },
+    {
+        "id": 6,
+        "name": "traffic light",
+        "supercategory": "object",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 6,
+        "ori_id": 19,
+        "color": [250, 170, 30],
+    },
+    {
+        "id": 7,
+        "name": "traffic sign",
+        "supercategory": "object",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 7,
+        "ori_id": 21,
+        "color": [220, 220, 0],
+    },
+    {
+        "id": 8,
+        "name": "vegitation",
+        "supercategory": "nature",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 8,
+        "ori_id": 21,
+        "color": [107, 142, 35],
+    },
+    {
+        "id": 9,
+        "name": "terrain",
+        "supercategory": "nature",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 9,
+        "ori_id": 22,
+        "color": [152, 251, 152],
+    },
+    {
+        "id": 10,
+        "name": "sky",
+        "supercategory": "sky",
+        "isthing": 0,
+        "instance_eval": 0,
+        "trainid": 10,
+        "ori_id": 23,
+        "color": [70, 130, 180],
+    },
+    {
+        "id": 11,
+        "name": "person",
+        "supercategory": "human",
+        "isthing": 1,
+        "instance_eval": 1,
+        "trainid": 11,
+        "ori_id": 24,
+        "color": [220, 20, 60],
+    },
+    {
+        "id": 12,
+        "name": "rider",
+        "supercategory": "human",
+        "isthing": 1,
+        "instance_eval": 1,
+        "trainid": 12,
+        "ori_id": 25,
+        "color": [255, 0, 0],
+    },
+    {
+        "id": 13,
+        "name": "car",
+        "supercategory": "vehicle",
+        "isthing": 1,
+        "instance_eval": 1,
+        "trainid": 13,
+        "ori_id": 26,
+        "color": [0, 0, 142],
+    },
+    {
+        "id": 14,
+        "name": "truck",
+        "supercategory": "vehicle",
+        "isthing": 1,
+        "instance_eval": 1,
+        "trainid": 14,
+        "ori_id": 27,
+        "color": [0, 0, 70],
+    },
+    {
+        "id": 15,
+        "name": "bus",
+        "supercategory": "vehicle",
+        "isthing": 1,
+        "instance_eval": 1,
+        "trainid": 15,
+        "ori_id": 28,
+        "color": [0, 60, 100],
+    },
+    {
+        "id": 16,
+        "name": "train",
+        "supercategory": "vehicle",
+        "isthing": 1,
+        "instance_eval": 1,
+        "trainid": 16,
+        "ori_id": 31,
+        "color": [0, 80, 100],
+    },
+    {
+        "id": 17,
+        "name": "motorcycle",
+        "supercategory": "vehicle",
+        "isthing": 1,
+        "instance_eval": 1,
+        "trainid": 17,
+        "ori_id": 32,
+        "color": [0, 0, 230],
+    },
+    {
+        "id": 18,
+        "name": "bicycle",
+        "supercategory": "vehicle",
+        "isthing": 1,
+        "instance_eval": 1,
+        "trainid": 18,
+        "ori_id": 33,
+        "color": [119, 11, 32],
+    },
+]
 
 
 def _get_vps_instances_meta():
@@ -51,7 +221,6 @@ def _get_vps_instances_meta():
     thing_ids = [k["id"] for k in CITYSCAPES_VPS_CATEGORIES]
     thing_colors = [k["color"] for k in CITYSCAPES_VPS_CATEGORIES]
     thing_classes = [k["name"] for k in CITYSCAPES_VPS_CATEGORIES]
-
 
     assert len(thing_ids) == 19
     # # Mapping from the incontiguous category id to an id in [0, 24]
@@ -74,7 +243,9 @@ def load_vps_json(json_file, image_root, dataset_name=None, extra_annotation_key
     with contextlib.redirect_stdout(io.StringIO()):
         ytvis_api = YTVOS(json_file)
     if timer.seconds() > 1:
-        logger.info("Loading {} takes {:.2f} seconds.".format(json_file, timer.seconds()))
+        logger.info(
+            "Loading {} takes {:.2f} seconds.".format(json_file, timer.seconds())
+        )
 
     id_map = None
     if dataset_name is not None:
@@ -126,7 +297,9 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
         )
 
     vids_anns = list(zip(vids, anns))
-    logger.info("Loaded {} videos in YTVIS format from {}".format(len(vids_anns), json_file))
+    logger.info(
+        "Loaded {} videos in YTVIS format from {}".format(len(vids_anns), json_file)
+    )
 
     dataset_dicts = []
 
@@ -136,7 +309,10 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
 
     for (vid_dict, anno_dict_list) in vids_anns:
         record = {}
-        record["file_names"] = [os.path.join(image_root, vid_dict["file_names"][i]) for i in range(vid_dict["length"])]
+        record["file_names"] = [
+            os.path.join(image_root, vid_dict["file_names"][i])
+            for i in range(vid_dict["length"])
+        ]
         record["height"] = vid_dict["height"]
         record["width"] = vid_dict["width"]
         record["length"] = vid_dict["length"]
@@ -168,7 +344,9 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
                         segm = mask_util.frPyObjects(segm, *segm["size"])
                 elif segm:
                     # filter out invalid polygons (< 3 points)
-                    segm = [poly for poly in segm if len(poly) % 2 == 0 and len(poly) >= 6]
+                    segm = [
+                        poly for poly in segm if len(poly) % 2 == 0 and len(poly) >= 6
+                    ]
                     if len(segm) == 0:
                         num_instances_without_valid_segmentation += 1
                         continue  # ignore this instance
@@ -190,6 +368,7 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
             "A valid polygon should be a list[float] with even length >= 6."
         )
     return dataset_dicts
+
 
 def register_vps_instances(name, metadata, json_file, image_root):
     """

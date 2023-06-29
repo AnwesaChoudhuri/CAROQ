@@ -1,5 +1,3 @@
-
-
 import numpy as np
 import logging
 import sys
@@ -20,7 +18,12 @@ class ResizeShortestEdge(T.Augmentation):
     """
 
     def __init__(
-        self, short_edge_length, max_size=sys.maxsize, sample_style="range", interp=Image.BILINEAR, clip_frame_cnt=1
+        self,
+        short_edge_length,
+        max_size=sys.maxsize,
+        sample_style="range",
+        interp=Image.BILINEAR,
+        clip_frame_cnt=1,
     ):
         """
         Args:
@@ -31,9 +34,14 @@ class ResizeShortestEdge(T.Augmentation):
             sample_style (str): either "range" or "choice".
         """
         super().__init__()
-        assert sample_style in ["range", "choice", "range_by_clip", "choice_by_clip"], sample_style
+        assert sample_style in [
+            "range",
+            "choice",
+            "range_by_clip",
+            "choice_by_clip",
+        ], sample_style
 
-        self.is_range = ("range" in sample_style)
+        self.is_range = "range" in sample_style
         if isinstance(short_edge_length, int):
             short_edge_length = (short_edge_length, short_edge_length)
         if self.is_range:
@@ -47,13 +55,15 @@ class ResizeShortestEdge(T.Augmentation):
     def get_transform(self, image):
         if self._cnt % self.clip_frame_cnt == 0:
             if self.is_range:
-                self.size = np.random.randint(self.short_edge_length[0], self.short_edge_length[1] + 1)
+                self.size = np.random.randint(
+                    self.short_edge_length[0], self.short_edge_length[1] + 1
+                )
             else:
                 self.size = np.random.choice(self.short_edge_length)
             if self.size == 0:
                 return NoOpTransform()
 
-            self._cnt = 0   # avoiding overflow
+            self._cnt = 0  # avoiding overflow
         self._cnt += 1
 
         h, w = image.shape[:2]
@@ -87,7 +97,9 @@ class RandomFlip(T.Augmentation):
         super().__init__()
 
         if horizontal and vertical:
-            raise ValueError("Cannot do both horiz and vert. Please use two Flip instead.")
+            raise ValueError(
+                "Cannot do both horiz and vert. Please use two Flip instead."
+            )
         if not horizontal and not vertical:
             raise ValueError("At least one of horiz or vert has to be True!")
         self._cnt = 0
@@ -97,7 +109,7 @@ class RandomFlip(T.Augmentation):
     def get_transform(self, image):
         if self._cnt % self.clip_frame_cnt == 0:
             self.do = self._rand_range() < self.prob
-            self._cnt = 0   # avoiding overflow
+            self._cnt = 0  # avoiding overflow
         self._cnt += 1
 
         h, w = image.shape[:2]
@@ -123,8 +135,16 @@ def build_augmentation(cfg, is_train):
         min_size = cfg.INPUT.MIN_SIZE_TRAIN
         max_size = cfg.INPUT.MAX_SIZE_TRAIN
         sample_style = cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING
-        ms_clip_frame_cnt = cfg.INPUT.SAMPLING_FRAME_NUM if "by_clip" in cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING else 1
-        aug_list.append(ResizeShortestEdge(min_size, max_size, sample_style, clip_frame_cnt=ms_clip_frame_cnt))
+        ms_clip_frame_cnt = (
+            cfg.INPUT.SAMPLING_FRAME_NUM
+            if "by_clip" in cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING
+            else 1
+        )
+        aug_list.append(
+            ResizeShortestEdge(
+                min_size, max_size, sample_style, clip_frame_cnt=ms_clip_frame_cnt
+            )
+        )
 
         # Flip
         if cfg.INPUT.RANDOM_FLIP != "none":
@@ -136,7 +156,8 @@ def build_augmentation(cfg, is_train):
             aug_list.append(
                 # NOTE using RandomFlip modified for the support of flip maintenance
                 RandomFlip(
-                    horizontal=(cfg.INPUT.RANDOM_FLIP == "horizontal") or (cfg.INPUT.RANDOM_FLIP == "flip_by_clip"),
+                    horizontal=(cfg.INPUT.RANDOM_FLIP == "horizontal")
+                    or (cfg.INPUT.RANDOM_FLIP == "flip_by_clip"),
                     vertical=cfg.INPUT.RANDOM_FLIP == "vertical",
                     clip_frame_cnt=flip_clip_frame_cnt,
                 )
@@ -153,7 +174,10 @@ def build_augmentation(cfg, is_train):
         if "rotation" in augmentations:
             aug_list.append(
                 T.RandomRotation(
-                    [-15, 15], expand=False, center=[(0.4, 0.4), (0.6, 0.6)], sample_style="range"
+                    [-15, 15],
+                    expand=False,
+                    center=[(0.4, 0.4), (0.6, 0.6)],
+                    sample_style="range",
                 )
             )
     else:

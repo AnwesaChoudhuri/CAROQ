@@ -17,7 +17,11 @@ import time
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
-from detectron2.data import MetadataCatalog, build_detection_train_loader, build_detection_test_loader
+from detectron2.data import (
+    MetadataCatalog,
+    build_detection_train_loader,
+    build_detection_test_loader,
+)
 from detectron2.engine import (
     DefaultTrainer,
     default_argument_parser,
@@ -38,7 +42,7 @@ from caroq_video import get_detection_dataset_dicts as video_detection_dataset_d
 from caroq_video import build_detection_train_loader as video_train_loader
 from caroq_video import build_detection_test_loader as video_test_loader
 
-#from cityscapes_vps.mmdet.datasets import build_dataset as build_vps_dataset
+# from cityscapes_vps.mmdet.datasets import build_dataset as build_vps_dataset
 
 from detectron2.evaluation.evaluator import DatasetEvaluator
 
@@ -48,9 +52,9 @@ from detectron2.utils.logger import setup_logger
 
 import pdb
 
-#from caroq.data.datasets.register_mots import register_all_mots
+# from caroq.data.datasets.register_mots import register_all_mots
 
-#from caroq.mots_evaluation import MOTSEvaluator
+# from caroq.mots_evaluation import MOTSEvaluator
 from caroq import add_maskformer2_config
 
 
@@ -83,7 +87,7 @@ class Trainer(DefaultTrainer):
         results = OrderedDict()
         for idx, dataset_name in enumerate(cfg.DATASETS.TEST):
 
-            data_loader=cls.build_test_loader(cfg)
+            data_loader = cls.build_test_loader(cfg)
 
             if evaluators is not None:
                 evaluator = evaluators[idx]
@@ -106,7 +110,9 @@ class Trainer(DefaultTrainer):
                 ), "Evaluator must return a dict on the main process. Got {} instead.".format(
                     results_i
                 )
-                logger.info("Evaluation results for {} in csv format:".format(dataset_name))
+                logger.info(
+                    "Evaluation results for {} in csv format:".format(dataset_name)
+                )
                 print_csv_format(results_i)
 
         if len(results) == 1:
@@ -119,13 +125,13 @@ class Trainer(DefaultTrainer):
         """
         Create evaluator(s) for a given dataset.
         """
-        if cfg.INPUT.DATASET_MAPPER_NAME =="youtube_vis":
+        if cfg.INPUT.DATASET_MAPPER_NAME == "youtube_vis":
             if output_folder is None:
                 output_folder = os.path.join(cfg.OUTPUT_DIR, "inference/")
                 os.makedirs(output_folder, exist_ok=True)
             evaluator = YTVISEvaluator(dataset_name, cfg, True, output_folder)
 
-        elif cfg.INPUT.DATASET_MAPPER_NAME=="cityscapes_vps":
+        elif cfg.INPUT.DATASET_MAPPER_NAME == "cityscapes_vps":
             if output_folder is None:
                 output_folder = os.path.join(cfg.OUTPUT_DIR, "panoptic_pred/")
                 os.makedirs(output_folder, exist_ok=True)
@@ -138,7 +144,7 @@ class Trainer(DefaultTrainer):
     @classmethod
     def build_test_loader(cls, cfg):
 
-        if cfg.INPUT.DATASET_MAPPER_NAME in ("youtube_vis",  "cityscapes_vps"):
+        if cfg.INPUT.DATASET_MAPPER_NAME in ("youtube_vis", "cityscapes_vps"):
             mapper = YTVISDatasetMapper(cfg, is_train=False)
             dataset_name = cfg.DATASETS.TEST[0]
             return video_test_loader(cfg, dataset_name, mapper=mapper)
@@ -152,11 +158,13 @@ class Trainer(DefaultTrainer):
             dataset_dict = video_detection_dataset_dicts(
                 dataset_name,
                 filter_empty=cfg.DATALOADER.FILTER_EMPTY_ANNOTATIONS,
-                proposal_files=cfg.DATASETS.PROPOSAL_FILES_TRAIN if cfg.MODEL.LOAD_PROPOSALS else None,
-                subset=cfg.INPUT.SUBSET, train=True
+                proposal_files=cfg.DATASETS.PROPOSAL_FILES_TRAIN
+                if cfg.MODEL.LOAD_PROPOSALS
+                else None,
+                subset=cfg.INPUT.SUBSET,
+                train=True,
             )
             return video_train_loader(cfg, mapper=mapper, dataset=dataset_dict)
-
 
         elif cfg.INPUT.DATASET_MAPPER_NAME == "cityscapes_vps":
             mapper = YTVISDatasetMapper(cfg, is_train=True)
@@ -164,8 +172,11 @@ class Trainer(DefaultTrainer):
             dataset_dict = video_detection_dataset_dicts(
                 dataset_name,
                 filter_empty=cfg.DATALOADER.FILTER_EMPTY_ANNOTATIONS,
-                proposal_files=cfg.DATASETS.PROPOSAL_FILES_TRAIN if cfg.MODEL.LOAD_PROPOSALS else None,
-                subset=cfg.INPUT.SUBSET, train=True
+                proposal_files=cfg.DATASETS.PROPOSAL_FILES_TRAIN
+                if cfg.MODEL.LOAD_PROPOSALS
+                else None,
+                subset=cfg.INPUT.SUBSET,
+                train=True,
             )
             return video_train_loader(cfg, mapper=mapper, dataset=dataset_dict)
 
@@ -217,7 +228,9 @@ class Trainer(DefaultTrainer):
 
                 hyperparams = copy.copy(defaults)
                 if "backbone" in module_name:
-                    hyperparams["lr"] = hyperparams["lr"] * cfg.SOLVER.BACKBONE_MULTIPLIER
+                    hyperparams["lr"] = (
+                        hyperparams["lr"] * cfg.SOLVER.BACKBONE_MULTIPLIER
+                    )
                 if (
                     "relative_position_bias_table" in module_param_name
                     or "absolute_pos_embed" in module_param_name
@@ -241,7 +254,9 @@ class Trainer(DefaultTrainer):
 
             class FullModelGradientClippingOptimizer(optim):
                 def step(self, closure=None):
-                    all_params = itertools.chain(*[x["params"] for x in self.param_groups])
+                    all_params = itertools.chain(
+                        *[x["params"] for x in self.param_groups]
+                    )
                     torch.nn.utils.clip_grad_norm_(all_params, clip_norm_val)
                     super().step(closure=closure)
 
@@ -292,7 +307,9 @@ def setup(args):
     cfg.freeze()
     default_setup(cfg, args)
     # Setup logger for "mask_former" module
-    setup_logger(output=cfg.OUTPUT_DIR, distributed_rank=comm.get_rank(), name="mask2former")
+    setup_logger(
+        output=cfg.OUTPUT_DIR, distributed_rank=comm.get_rank(), name="mask2former"
+    )
     return cfg
 
 
@@ -300,7 +317,7 @@ def main(args):
     cfg = setup(args)
 
     if cfg.INPUT.DATASET_MAPPER_NAME == "cityscape_vps":
-        time1=time.time()
+        time1 = time.time()
         register_all_vps(cfg)
 
     if args.eval_only:

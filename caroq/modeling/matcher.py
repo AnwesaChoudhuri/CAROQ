@@ -11,6 +11,7 @@ import time
 from detectron2.projects.point_rend.point_features import point_sample
 import os
 
+
 def batch_dice_loss(inputs: torch.Tensor, targets: torch.Tensor):
     """
     Compute the DICE loss, similar to generalized IOU for masks
@@ -29,9 +30,7 @@ def batch_dice_loss(inputs: torch.Tensor, targets: torch.Tensor):
     return loss
 
 
-batch_dice_loss_jit = torch.jit.script(
-    batch_dice_loss
-)  # type: torch.jit.ScriptModule
+batch_dice_loss_jit = torch.jit.script(batch_dice_loss)  # type: torch.jit.ScriptModule
 
 
 def batch_sigmoid_ce_loss(inputs: torch.Tensor, targets: torch.Tensor):
@@ -74,7 +73,15 @@ class HungarianMatcher(nn.Module):
     while the others are un-matched (and thus treated as non-objects).
     """
 
-    def __init__(self, cost_class: float = 1, cost_mask: float = 1, cost_dice: float = 1, num_points: int = 0, time_gap=5, matcher_config="noignore"):
+    def __init__(
+        self,
+        cost_class: float = 1,
+        cost_mask: float = 1,
+        cost_dice: float = 1,
+        num_points: int = 0,
+        time_gap=5,
+        matcher_config="noignore",
+    ):
         """Creates the matcher
 
         Params:
@@ -86,26 +93,36 @@ class HungarianMatcher(nn.Module):
         self.cost_class = cost_class
         self.cost_mask = cost_mask
         self.cost_dice = cost_dice
-        self.time_gap=time_gap
-        self.matcher_config=matcher_config
+        self.time_gap = time_gap
+        self.matcher_config = matcher_config
 
-        assert cost_class != 0 or cost_mask != 0 or cost_dice != 0, "all costs cant be 0"
+        assert (
+            cost_class != 0 or cost_mask != 0 or cost_dice != 0
+        ), "all costs cant be 0"
 
         self.num_points = num_points
 
     @torch.no_grad()
     def memory_efficient_forward(self, outputs, targets, targets_split):
         """More memory-friendly matching"""
-        bs_t, num_queries, h_op,w_op = outputs["pred_masks"].shape
+        bs_t, num_queries, h_op, w_op = outputs["pred_masks"].shape
 
-        out_mask_idx=0
+        out_mask_idx = 0
 
         indices = []
 
-        output_masks=outputs["pred_masks"].reshape(len(targets),-1, num_queries, h_op,w_op).permute(0,2,1,3,4)
-        output_logits=outputs["pred_logits"].reshape(len(targets),-1, num_queries, outputs["pred_logits"].shape[-1]).permute(0,2,1,3)
-        targets_split_1=targets_split[::2]
-        targets_split_2=targets_split[1::2]
+        output_masks = (
+            outputs["pred_masks"]
+            .reshape(len(targets), -1, num_queries, h_op, w_op)
+            .permute(0, 2, 1, 3, 4)
+        )
+        output_logits = (
+            outputs["pred_logits"]
+            .reshape(len(targets), -1, num_queries, outputs["pred_logits"].shape[-1])
+            .permute(0, 2, 1, 3)
+        )
+        targets_split_1 = targets_split[::2]
+        targets_split_2 = targets_split[1::2]
 
         for b in range(len(targets)):
 
@@ -115,19 +132,19 @@ class HungarianMatcher(nn.Module):
             tgt_ids_1 = targets_split_1[b]["labels"]
             tgt_ids_2 = targets_split_2[b]["labels"]
 
-            cost_class_tmp = out_prob[:,:,tgt_ids]
+            cost_class_tmp = out_prob[:, :, tgt_ids]
 
-            if self.matcher_config=="ignore": # modified loss
+            if self.matcher_config == "ignore":  # modified loss
 
                 if -100 in tgt_ids_1 or -100 in tgt_ids_2:
                     if -100 in tgt_ids_1:
-                        cost_class_tmp[:,0,torch.where(tgt_ids_1==-100)[0]]=0
+                        cost_class_tmp[:, 0, torch.where(tgt_ids_1 == -100)[0]] = 0
                     else:
-                        cost_class_tmp[:,1,torch.where(tgt_ids_2==-100)[0]]=0
+                        cost_class_tmp[:, 1, torch.where(tgt_ids_2 == -100)[0]] = 0
 
             cost_class = -(cost_class_tmp.sum(1))
 
-            out_mask = output_masks[b]   # [num_queries, T*2, H_pred, W_pred]
+            out_mask = output_masks[b]  # [num_queries, T*2, H_pred, W_pred]
 
             # gt masks are already padded when preparing target
             tgt_mask = targets[b]["masks"].to(out_mask)
@@ -155,20 +172,21 @@ class HungarianMatcher(nn.Module):
                 # Compute the dice loss betwen masks
                 cost_dice = batch_dice_loss_jit(out_mask, tgt_mask)
 
-
             # Final cost matrix
             C = (
-            self.cost_mask * cost_mask
-            + self.cost_class * cost_class
-            + self.cost_dice * cost_dice
+                self.cost_mask * cost_mask
+                + self.cost_class * cost_class
+                + self.cost_dice * cost_dice
             )
             C = C.reshape(num_queries, -1).cpu()
-            abc=linear_sum_assignment(C)
+            abc = linear_sum_assignment(C)
             indices.append(abc)
 
-
         return [
-            (torch.as_tensor(i, dtype=torch.int64), torch.as_tensor(j, dtype=torch.int64))
+            (
+                torch.as_tensor(i, dtype=torch.int64),
+                torch.as_tensor(j, dtype=torch.int64),
+            )
             for i, j in indices
         ]
 
