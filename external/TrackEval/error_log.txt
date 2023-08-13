@@ -1,0 +1,713 @@
+KittiMOTS
+output_pe2d_t4_r50_coco_trial/new/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 155, in evaluate
+    utils.write_detailed_results(details, c_cls, output_fol)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/utils.py", line 87, in write_detailed_results
+    writer.writerow(['COMBINED'] + sum([list(s['COMBINED_SEQ'].values()) for s in details], []))
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 92, in trace_dispatch
+    return self.dispatch_return(frame, arg)
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 151, in dispatch_return
+    self.user_return(frame, arg)
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/pdb.py", line 294, in user_return
+    self.interaction(frame, None)
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/pdb.py", line 357, in interaction
+    self._cmdloop()
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/pdb.py", line 322, in _cmdloop
+    self.cmdloop()
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/cmd.py", line 126, in cmdloop
+    line = input(self.prompt)
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 118353) exited unexpectedly with exit code 1. Details are lost due to multiprocessing. Rerunning with num_workers=0 may give better error trace.
+
+
+
+
+
+KittiMOTS
+output_pe2d_t4_r50_coco_multigpu/new/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 94, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 236, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+output_pe2d_t4_r50_coco_multigpu/new/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 94, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 236, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+output_pe2d_t4_r50_coco_multigpu/new/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 94, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 236, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+output_pe2d_t4_r50_coco_multigpu/itr999/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 95, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+
+
+
+
+KittiMOTS
+output_pe2d_t4_r50_coco_multigpu/new/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 95, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/ui/earthsense/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+
+
+
+
+KittiMOTS
+output_pe2d_t4_r50_coco_multigpu/new/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 95, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+output_pe2d_t4_r50_coco_multigpu/new/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 95, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+output_pe2d_t4_r50_coco_multigpu/new/
+Traceback (most recent call last):
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 95, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/earthsense/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 204, in _load_raw_file
+    raw_data['ids'][t] = np.atleast_1d([region[1] for region in read_data[time_key]]).astype(int)
+ValueError: invalid literal for int() with base 10: 'tensor(False,'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/_base_dataset.py", line 89, in get_raw_seq_data
+    raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 210, in _load_raw_file
+    self._raise_value_error(is_gt, tracker, seq)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 413, in _raise_value_error
+    raise TrackEvalException(
+external.TrackEval.trackeval.utils.TrackEvalException: Tracking data from tracker new/, sequence 0002 cannot be converted to the right format. Is data corrupted?
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 204, in _load_raw_file
+    raw_data['ids'][t] = np.atleast_1d([region[1] for region in read_data[time_key]]).astype(int)
+ValueError: invalid literal for int() with base 10: 'tensor(False,'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/_base_dataset.py", line 89, in get_raw_seq_data
+    raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 210, in _load_raw_file
+    self._raise_value_error(is_gt, tracker, seq)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 413, in _raise_value_error
+    raise TrackEvalException(
+external.TrackEval.trackeval.utils.TrackEvalException: Tracking data from tracker new/, sequence 0002 cannot be converted to the right format. Is data corrupted?
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 191, in eval_sequence
+    data = dataset.get_preprocessed_seq_data(raw_data, cls)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 328, in get_preprocessed_seq_data
+    intersection_with_ignore_region = self._calculate_mask_ious(unmatched_tracker_dets, [ignore_region],
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/_base_dataset.py", line 95, in get_raw_seq_data
+    ious = self._calculate_similarities(gt_dets_t, tracker_dets_t)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 379, in _calculate_similarities
+    similarity_scores = self._calculate_mask_ious(gt_dets_t, tracker_dets_t, is_encoded=True, do_ioa=False)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 191, in eval_sequence
+    data = dataset.get_preprocessed_seq_data(raw_data, cls)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/kitti_mots.py", line 328, in get_preprocessed_seq_data
+    intersection_with_ignore_region = self._calculate_mask_ious(unmatched_tracker_dets, [ignore_region],
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/datasets/_base_dataset.py", line 238, in _calculate_mask_ious
+    assert (ious >= 0 - np.finfo('float').eps).all()
+AssertionError
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 145, in evaluate
+    if config['OUTPUT_SUMMARY']:
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 145, in evaluate
+    if config['OUTPUT_SUMMARY']:
+  File "/ui/aifarms/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/ui/aifarms/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 136, in evaluate
+    if c_cls in combined_cls_keys:
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/metrics/_base_metric.py", line 78, in print_table
+    self._row_print(['COMBINED'] + summary_res)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/metrics/_base_metric.py", line 78, in print_table
+    self._row_print(['COMBINED'] + summary_res)
+  File "/ui/aifarms/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/ui/aifarms/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 144, in evaluate
+    abc=metric.print_table(table_res, tracker_display_name, c_cls)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/metrics/_base_metric.py", line 75, in print_table
+    self._row_print([seq] + summary_res)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/metrics/_base_metric.py", line 102, in _row_print
+    print(to_print)
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/metrics/_base_metric.py", line 102, in _row_print
+    print(to_print)
+  File "/ui/aifarms/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/ui/aifarms/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+
+
+
+
+KittiMOTS
+new/
+Traceback (most recent call last):
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 145, in evaluate
+    if config['OUTPUT_SUMMARY']:
+  File "/ui/aifarms/anwesac2/Workspace/Mask2Former/external/TrackEval/trackeval/eval.py", line 145, in evaluate
+    if config['OUTPUT_SUMMARY']:
+  File "/ui/aifarms/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/ui/aifarms/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+
+
+
+
+KittiMOTS
+kittimots_full/result_itr0001999/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 148, in _load_simple_text_file
+    fp = open(file)
+FileNotFoundError: [Errno 2] No such file or directory: 'saved_outputs/kittimots_full/result_itr0001999/Instances_txt/0007.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 89, in get_raw_seq_data
+    raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 184, in _load_raw_file
+    read_data, ignore_data = self._load_simple_text_file(file, crowd_ignore_filter=crowd_ignore_filter,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 204, in _load_simple_text_file
+    raise TrackEvalException(
+external.TrackEval.trackeval.utils.TrackEvalException: File 0007.txt cannot be read because it is either not present or invalidly formatted
+
+
+
+
+
+KittiMOTS
+kittimots_full/result_itr0001999/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 148, in _load_simple_text_file
+    fp = open(file)
+FileNotFoundError: [Errno 2] No such file or directory: 'saved_outputs/kittimots_full/result_itr0001999/Instances_txt/0007.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 86, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 187, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 89, in get_raw_seq_data
+    raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 184, in _load_raw_file
+    read_data, ignore_data = self._load_simple_text_file(file, crowd_ignore_filter=crowd_ignore_filter,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 204, in _load_simple_text_file
+    raise TrackEvalException(
+external.TrackEval.trackeval.utils.TrackEvalException: File 0007.txt cannot be read because it is either not present or invalidly formatted
+
+
+
+
+
+KittiMOTS
+kittimots_full/result_itr0001999/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 195, in eval_sequence
+    pdb.set_trace()
+NameError: name 'pdb' is not defined
+
+
+
+
+
+KittiMOTS
+kittimots_full/result_itr0001999/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 196, in eval_sequence
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 196, in eval_sequence
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+
+
+
+
+KittiMOTS
+kittimots_trial_swin_range1_ignorebothdir//new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 155, in _load_simple_text_file
+    dialect = csv.Sniffer().sniff(fp.read(10240), delimiters=force_delimiters)  # Auto determine structure.
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/csv.py", line 187, in sniff
+    raise Error("Could not determine delimiter")
+_csv.Error: Could not determine delimiter
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 194, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 89, in get_raw_seq_data
+    raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/kitti_mots.py", line 184, in _load_raw_file
+    read_data, ignore_data = self._load_simple_text_file(file, crowd_ignore_filter=crowd_ignore_filter,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 204, in _load_simple_text_file
+    raise TrackEvalException(
+external.TrackEval.trackeval.utils.TrackEvalException: File 0018.txt cannot be read because it is either not present or invalidly formatted
+
+
+
+
+
+KittiMOTS
+kittimots_vid0_4frames//new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 153, in evaluate
+    metric.plot_single_tracker_results(table_res, tracker_display_name, c_cls,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/metrics/hota.py", line 195, in plot_single_tracker_results
+    plt.savefig(out_file)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/pyplot.py", line 958, in savefig
+    res = fig.savefig(*args, **kwargs)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/figure.py", line 3019, in savefig
+    self.canvas.print_figure(fname, **kwargs)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/backend_bases.py", line 2259, in print_figure
+    canvas = self._get_output_canvas(backend, format)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/backend_bases.py", line 2184, in _get_output_canvas
+    canvas_class = get_registered_canvas_class(fmt)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/backend_bases.py", line 144, in get_registered_canvas_class
+    backend_class = importlib.import_module(backend_class).FigureCanvas
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 843, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/backends/backend_pdf.py", line 47, in <module>
+    from . import _backend_pdf_ps
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/backends/_backend_pdf_ps.py", line 8, in <module>
+    from fontTools import subset
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/fontTools/subset/__init__.py", line 7, in <module>
+    from fontTools.ttLib.tables import otTables
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/fontTools/ttLib/tables/otTables.py", line 2041, in <module>
+    _buildClasses()
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/fontTools/ttLib/tables/otTables.py", line 1941, in _buildClasses
+    from .otData import otData
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 839, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 971, in get_code
+  File "<frozen importlib._bootstrap_external>", line 641, in _compile_bytecode
+  File "<frozen importlib._bootstrap_external>", line 641, in _compile_bytecode
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+
+
+
+
+KittiMOTS
+kittimots_vid0_4frames//new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 153, in evaluate
+    metric.plot_single_tracker_results(table_res, tracker_display_name, c_cls,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/metrics/hota.py", line 192, in plot_single_tracker_results
+    plt.legend(legend, loc='lower left')
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/pyplot.py", line 2655, in legend
+    return gca().legend(*args, **kwargs)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/axes/_axes.py", line 305, in legend
+    self.legend_ = mlegend.Legend(self, handles, labels, **kwargs)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/legend.py", line 499, in __init__
+    self._init_legend_box(handles, labels, markerfirst)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/legend.py", line 780, in _init_legend_box
+    handle_list.append(handler.legend_artist(self, orig_handle,
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/legend_handler.py", line 119, in legend_artist
+    artists = self.create_artists(legend, orig_handle,
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/legend_handler.py", line 321, in create_artists
+    self.update_prop(legline, orig_handle, legend)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/legend_handler.py", line 78, in update_prop
+    self._update_prop(legend_handle, orig_handle)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/legend_handler.py", line 69, in _update_prop
+    self._default_update_prop(legend_handle, orig_handle)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/legend_handler.py", line 74, in _default_update_prop
+    legend_handle.update_from(orig_handle)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/lines.py", line 1288, in update_from
+    self._marker = MarkerStyle(marker=other._marker)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/markers.py", line 234, in __init__
+    self._set_fillstyle(fillstyle)
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/markers.py", line 279, in _set_fillstyle
+    self._fillstyle = fillstyle
+  File "/home/anwesac2/.local/lib/python3.8/site-packages/matplotlib/markers.py", line 279, in _set_fillstyle
+    self._fillstyle = fillstyle
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/bdb.py", line 112, in dispatch_line
+    self.user_line(frame)
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/pdb.py", line 262, in user_line
+    self.interaction(frame, None)
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/pdb.py", line 357, in interaction
+    self._cmdloop()
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/pdb.py", line 322, in _cmdloop
+    self.cmdloop()
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/cmd.py", line 126, in cmdloop
+    line = input(self.prompt)
+  File "/home/anwesac2/anaconda3/envs/mask2former/lib/python3.8/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 412077) exited unexpectedly with exit code 1. Details are lost due to multiprocessing. Rerunning with num_workers=0 may give better error trace.
+
+
+
+
+
+MOTSChallenge
+mots_lr0.0001_dilation20_cloneinmatcher/new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 148, in _load_simple_text_file
+    fp = open(file)
+FileNotFoundError: [Errno 2] No such file or directory: 'saved_outputs/mots_lr0.0001_dilation20_cloneinmatcher/new/mots_lr0.0001_dilation20_cloneinmatcher/new/Instances_txt/MOTS20-05.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 194, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 89, in get_raw_seq_data
+    raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/mots_challenge.py", line 194, in _load_raw_file
+    read_data, ignore_data = self._load_simple_text_file(file, crowd_ignore_filter=crowd_ignore_filter,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 204, in _load_simple_text_file
+    raise TrackEvalException(
+external.TrackEval.trackeval.utils.TrackEvalException: File MOTS20-05.txt cannot be read because it is either not present or invalidly formatted
+
+
+
+
+
+MOTSChallenge
+mots_lr0.0001_dilation20_cloneinmatcher/new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 148, in _load_simple_text_file
+    fp = open(file)
+FileNotFoundError: [Errno 2] No such file or directory: 'saved_outputs/mots_lr0.0001_dilation20_cloneinmatcher/new/mots_lr0.0001_dilation20_cloneinmatcher/new/Instances_txt/MOTS20-05.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/eval.py", line 194, in eval_sequence
+    raw_data = dataset.get_raw_seq_data(tracker, seq)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 89, in get_raw_seq_data
+    raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/mots_challenge.py", line 194, in _load_raw_file
+    read_data, ignore_data = self._load_simple_text_file(file, crowd_ignore_filter=crowd_ignore_filter,
+  File "/home/anwesac2/Workspace/Mask2Former_old/external/TrackEval/trackeval/datasets/_base_dataset.py", line 204, in _load_simple_text_file
+    raise TrackEvalException(
+external.TrackEval.trackeval.utils.TrackEvalException: File MOTS20-05.txt cannot be read because it is either not present or invalidly formatted
+
+
+
+
+
