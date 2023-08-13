@@ -96,7 +96,7 @@ data/
 
 1. Please create a folder under your **./data** directory called **KITTI_MOTS/**. Download the KITTI-MOTS images and annotations from [here](https://www.vision.rwth-aachen.de/page/mots) under this directory.
    
-2. Run the following to create a usable usable format of the dataset.
+2. Run the following to create a usable format of the dataset.
    ```cd datasets/
       python generate_kittimots.py
    ```
