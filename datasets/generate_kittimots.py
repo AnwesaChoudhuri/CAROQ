@@ -1,26 +1,36 @@
-import torch
-import torch.utils.data
-from torchvision import datasets, transforms
-from torch.utils.data import Dataset, DataLoader
-import numpy as np
 import pycocotools.mask as cocomask
 import pdb
 import json
-import time
 import cv2
-import torch.utils.data as data
 import os
 import os.path
+import shutil
+
 import sys
+sys.path.append("../")
+
 import external.mots_tools.mots_common.io as io1
 
 
-def get_mots_dict(data_dir, subset=False):
+DATA_DIR="../../data/KITTI_MOTS/"
+SEQMAP_DIR="../external/mots_tools/mots_eval/"
 
-    if subset == True:
-        all_dirs = sorted(os.listdir(os.path.join(data_dir, "images")))[:1]
-    else:
-        all_dirs = sorted(os.listdir(os.path.join(data_dir, "images")))
+
+def load_seqmap(seqmap_filename):
+    print("Loading seqmap...")
+    seqmap = []
+    max_frames = {}
+    with open(seqmap_filename, "r") as fh:
+        for i, l in enumerate(fh):
+            fields = l.split(" ")
+            seq = "%04d" % int(fields[0])
+            seqmap.append(seq)
+            max_frames[seq] = int(fields[3])
+    return seqmap, max_frames
+
+def get_mots_dict(data_dir):
+
+    all_dirs = sorted(os.listdir(os.path.join(data_dir, "images")))
 
     idx = 0
     record = {}
@@ -33,12 +43,7 @@ def get_mots_dict(data_dir, subset=False):
     record["annotations"] = []
     for dir1 in all_dirs:
         print(dir1)
-        if subset == True:
-            image_names = sorted(os.listdir(os.path.join(data_dir, "images", dir1)))[
-                :20
-            ]
-        else:
-            image_names = sorted(os.listdir(os.path.join(data_dir, "images", dir1)))
+        image_names = sorted(os.listdir(os.path.join(data_dir, "images", dir1)))
         if os.path.exists(os.path.join(data_dir, "instances_txt")):
             objects_per_frame = io1.load_txt(
                 os.path.join(data_dir, "instances_txt", dir1 + ".txt")
@@ -173,16 +178,33 @@ def get_mots_dict(data_dir, subset=False):
     return record
 
 
-def get_all_mots_dict2(data_dir=".", save_file="trial.json", subset=True):
+def get_all_mots_dict2(data_dir=".", save_file="trial.json"):
 
-    mots_dict = get_mots_dict(data_dir, subset=subset)
+    mots_dict = get_mots_dict(data_dir)
     json.dump(mots_dict, open(save_file, "w"))
 
     return
 
 
-get_all_mots_dict2(
-    data_dir="data/KITTI_MOTS/val",
-    save_file="data/KITTI_MOTS/val_full.json",
-    subset=False,
-)
+if __name__ == "__main__":
+
+    image_dir=DATA_DIR+"data_tracking_image_2/training/image_02"
+    instances_dir=DATA_DIR+"instances_txt"
+    for mode in ["train", "val"]:
+        seq_map, max_frame=load_seqmap(SEQMAP_DIR+mode+".seqmap")
+        os.makedirs(os.path.join(DATA_DIR,mode), exist_ok=True)
+        os.makedirs(os.path.join(DATA_DIR,mode,"images"), exist_ok=True)
+        os.makedirs(os.path.join(DATA_DIR,mode,"instances_txt"), exist_ok=True)
+        for seq in seq_map:
+            if not os.path.exists(os.path.join(DATA_DIR,mode,"images", seq)):
+                shutil.copytree(os.path.join(image_dir, seq), os.path.join(DATA_DIR,mode,"images", seq))
+            if not os.path.exists(os.path.join(DATA_DIR,mode, "instances_txt", seq)+".txt"):
+                shutil.copy(os.path.join(instances_dir, seq)+".txt", os.path.join(DATA_DIR,mode, "instances_txt", seq)+".txt")
+
+
+        get_all_mots_dict2(
+            data_dir=DATA_DIR+mode,
+            save_file=DATA_DIR+mode+"_full.json",
+        )
+
+
