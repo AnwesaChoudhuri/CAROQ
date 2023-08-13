@@ -92,11 +92,20 @@ data/
     val_full.json
 ```
 
-### Steps for to create KITTI-MOTS:
+### Steps to create KITTI-MOTS:
 
 1. Please create a folder under your **./data** directory called **KITTI_MOTS/**. Download the KITTI-MOTS images and annotations from [here](https://www.vision.rwth-aachen.de/page/mots) under this directory.
    
 2. Run the following to create a usable format of the dataset.
    ```cd datasets/
       python generate_kittimots.py
+   ```
+
+### Steps to create MOTS-2020:
+
+1. Please create a folder under your **./data** directory called **MOTS_2020/**. Download the MOTS-2020 images and annotations from [here](https://www.vision.rwth-aachen.de/page/mots) under this directory.
+   
+2. Run the following to create a usable format of the dataset.
+   ```cd datasets/
+      python generate_mots2020.py
    ```
