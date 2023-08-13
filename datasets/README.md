@@ -78,4 +78,25 @@ Now we are got to run training/evaluation.
 
 
 ## Expected dataset structure for [KITTI-MOTS](https://www.cvlibs.net/datasets/kitti/eval_mots.php), [MOTS-2020](https://motchallenge.net/workshops/bmtt2020/tracking.html)
-Coming soon...
+
+```
+data/
+  {KITTI_MOTS, MOTS_2020}/
+    train/
+      images/
+      instances_txt/
+    val/
+      images/
+      instances_txt/
+    train_full.json
+    val_full.json
+```
+
+### Steps for to create KITTI-MOTS:
+
+1. Please create a folder under your **./data** directory called **KITTI_MOTS/**. Download the KITTI-MOTS images and annotations from [here](https://www.vision.rwth-aachen.de/page/mots) under this directory.
+   
+2. Run the following to create a usable usable format of the dataset.
+   ```cd datasets/
+      python generate_kittimots.py
+   ```
