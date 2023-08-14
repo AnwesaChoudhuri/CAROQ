@@ -74,7 +74,6 @@ data/
       panoptic_vps_val.json
       panoptic_vps_test.json
 ```
-Now we are got to run training/evaluation.
 
 
 ## Expected dataset structure for [KITTI-MOTS](https://www.cvlibs.net/datasets/kitti/eval_mots.php), [MOTS-2020](https://motchallenge.net/workshops/bmtt2020/tracking.html)
@@ -94,16 +93,29 @@ data/
 
 ### Steps to create KITTI-MOTS:
 
-1. Please create a folder under your **./data** directory called **KITTI_MOTS/**. Download the KITTI-MOTS images and annotations from [here](https://www.vision.rwth-aachen.de/page/mots) under this directory.
+1. Please create a folder under your **./data** directory called **KITTI_MOTS/**. Download the KITTI-MOTS images and annotations from [here](https://www.vision.rwth-aachen.de/page/mots) under this directory. The structure should be as follows:
+   ```
+   KITTI_MOTS/
+     data_tracking_image_2/
+       training/
+         image_02/
+     instances_txt/
+  ```
    
-2. Run the following to create a usable format of the dataset.
+3. Run the following to create a usable format of the dataset.
    ```cd datasets/
       python generate_kittimots.py
    ```
 
 ### Steps to create MOTS-2020:
 
-1. Please create a folder under your **./data** directory called **MOTS_2020/**. Download the MOTS-2020 images and annotations from [here](https://www.vision.rwth-aachen.de/page/mots) under this directory.
+1. Please create a folder under your **./data** directory called **MOTS2020/**. Download the MOTS-2020 images and annotations from [here](https://www.vision.rwth-aachen.de/page/mots) under this directory. The structure should be as follows:
+   ```
+   MOTS2020/
+     MOT17/
+       train/
+     instances_txt/
+  ```
    
 2. Run the following to create a usable format of the dataset.
    ```cd datasets/
