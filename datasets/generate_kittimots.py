@@ -191,15 +191,22 @@ if __name__ == "__main__":
     image_dir=DATA_DIR+"data_tracking_image_2/training/image_02"
     instances_dir=DATA_DIR+"instances_txt"
     for mode in ["train", "val"]:
-        seq_map, max_frame=load_seqmap(SEQMAP_DIR+mode+".seqmap")
+        seq_map, max_frame=load_seqmap(SEQMAP_DIR+mode+"_KITTIMOTS"+".seqmap")
         os.makedirs(os.path.join(DATA_DIR,mode), exist_ok=True)
         os.makedirs(os.path.join(DATA_DIR,mode,"images"), exist_ok=True)
         os.makedirs(os.path.join(DATA_DIR,mode,"instances_txt"), exist_ok=True)
         for seq in seq_map:
-            if not os.path.exists(os.path.join(DATA_DIR,mode,"images", seq)):
-                shutil.copytree(os.path.join(image_dir, seq), os.path.join(DATA_DIR,mode,"images", seq))
-            if not os.path.exists(os.path.join(DATA_DIR,mode, "instances_txt", seq)+".txt"):
-                shutil.copy(os.path.join(instances_dir, seq)+".txt", os.path.join(DATA_DIR,mode, "instances_txt", seq)+".txt")
+            
+            src_image_folder=os.path.join(image_dir, seq)
+            tgt_image_folder=os.path.join(DATA_DIR,mode,"images", seq)
+
+            src_txt_file=os.path.join(instances_dir, seq)+".txt"
+            tgt_txt_file=os.path.join(DATA_DIR,mode, "instances_txt", seq)+".txt"
+
+            if not os.path.exists(tgt_image_folder):
+                shutil.copytree(src_image_folder, tgt_image_folder)
+            if not os.path.exists(tgt_txt_file):
+                shutil.copy(src_txt_file, tgt_txt_file)
 
 
         get_all_mots_dict2(

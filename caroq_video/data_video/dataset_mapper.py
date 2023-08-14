@@ -281,4 +281,17 @@ class YTVISDatasetMapper:
         dataset_dict["image"] = torch.stack(dataset_dict["image"])
         dataset_dict["dataset"] = "ytvis"
 
+        if self.is_train:
+
+            # filter out remaining empty data points
+            if dataset_dict["instances"]==[]:
+                return None
+
+            # filter out data points with only ignore regions (gt_ids: -1)
+            num_ignore_instances=sum([sum(k.gt_ids==-1) for k in dataset_dict["instances"]])#.item()
+            num_instances=sum([len(k) for k in dataset_dict["instances"]])
+
+            if num_ignore_instances==num_instances:
+                return None
+
         return dataset_dict

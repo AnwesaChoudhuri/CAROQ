@@ -15,6 +15,18 @@ import external.mots_tools.mots_common.io as io1
 DATA_DIR="../../data/MOTS2020/"
 SEQMAP_DIR="../external/mots_tools/mots_eval/"
 
+def load_seqmap(seqmap_filename):
+    print("Loading seqmap...")
+    seqmap = []
+    max_frames = {}
+    with open(seqmap_filename, "r") as fh:
+        for i, l in enumerate(fh):
+            fields = l.split(" ")
+            seq = "%04d" % int(fields[0])
+            seqmap.append(seq)
+            max_frames[seq] = int(fields[3])
+    return seqmap, max_frames
+
 
 def get_mots_dict(data_dir, subset=False):
 
@@ -176,19 +188,41 @@ def get_all_mots_dict2(data_dir=".", save_file="trial.json"):
 
 if __name__ == "__main__":
 
-    image_dir=DATA_DIR+"MOT17"
-    instances_dir=DATA_DIR+"instances_txt"
+    image_dir=os.path.join(DATA_DIR,"MOT17", "train")
+    instance_dir=os.path.join(DATA_DIR,"instances_txt")
     for mode in ["train", "val"]:
         seq_map, max_frame=load_seqmap(SEQMAP_DIR+mode+"_MOTS2020"+".seqmap")
         os.makedirs(os.path.join(DATA_DIR,mode), exist_ok=True)
         os.makedirs(os.path.join(DATA_DIR,mode,"images"), exist_ok=True)
         os.makedirs(os.path.join(DATA_DIR,mode,"instances_txt"), exist_ok=True)
+        os.makedirs(os.path.join(DATA_DIR,mode,"seqinfo"), exist_ok=True)
         for seq in seq_map:
-            if not os.path.exists(os.path.join(DATA_DIR,mode,"images", seq)):
-                shutil.copytree(os.path.join(image_dir, seq), os.path.join(DATA_DIR,mode,"images", seq))
-            if not os.path.exists(os.path.join(DATA_DIR,mode, "instances_txt", seq)+".txt"):
-                shutil.copy(os.path.join(instances_dir, seq)+".txt", os.path.join(DATA_DIR,mode, "instances_txt", seq)+".txt")
+            
+            src_image_folder=os.path.join(image_dir, "MOT17-"+seq[2:]+"-DPM", "img1")
+            #tgt_image_folder=os.path.join(DATA_DIR,mode,"images", "MOTS20-"+seq[2:])
+            tgt_image_folder=os.path.join(DATA_DIR,mode,"images", seq)
 
+            src_txt_file=os.path.join(instance_dir, seq)+".txt"
+            #tgt_txt_file=os.path.join(DATA_DIR,mode, "instances_txt", "MOTS20-"+seq[2:], "gt", "gt")+".txt"
+            tgt_txt_file=os.path.join(DATA_DIR,mode, "instances_txt", seq, "gt", "gt")+".txt"
+
+            src_seqinfo_file=os.path.join(image_dir, "MOT17-"+seq[2:]+"-DPM", "seqinfo")+".ini"
+            #tgt_seqinfo_file=os.path.join(DATA_DIR,mode, "seqinfo", "MOTS20-"+seq[2:], "seqinfo")+".ini"
+            tgt_seqinfo_file=os.path.join(DATA_DIR,mode, "seqinfo", seq, "seqinfo")+".ini"
+
+            if not os.path.exists(tgt_image_folder):
+                shutil.copytree(src_image_folder, tgt_image_folder)
+            if not os.path.exists(tgt_txt_file):
+                os.makedirs(os.path.join(DATA_DIR,mode, "instances_txt", seq), exist_ok=True)
+                os.makedirs(os.path.join(DATA_DIR,mode, "instances_txt", seq, "gt"), exist_ok=True)
+                # os.makedirs(os.path.join(DATA_DIR,mode, "instances_txt", "MOTS20-"+seq[2:]), exist_ok=True)
+                # os.makedirs(os.path.join(DATA_DIR,mode, "instances_txt", "MOTS20-"+seq[2:], "gt"), exist_ok=True)
+                shutil.copy(src_txt_file, tgt_txt_file)
+            if not os.path.exists(tgt_seqinfo_file):
+                # os.makedirs(os.path.join(DATA_DIR,mode, "seqinfo", "MOTS20-"+seq[2:]), exist_ok=True)
+                # shutil.copy(src_seqinfo_file, tgt_seqinfo_file)
+                os.makedirs(os.path.join(DATA_DIR,mode, "seqinfo", seq), exist_ok=True)
+                shutil.copy(src_seqinfo_file, tgt_seqinfo_file)
 
         get_all_mots_dict2(
             data_dir=DATA_DIR+mode,

@@ -55,7 +55,7 @@ TEST:
   GT_DIR: "data/KITTI_MOTS/val/"
   OUTPUT_DIR: "new/"
   EVAL_MODE: "train"
-  SEQMAP: "external/mots_tools/mots_eval/val.seqmap"
+  SEQMAP: "external/mots_tools/mots_eval/val_KITTIMOTS.seqmap"
 DATALOADER:
   FILTER_EMPTY_ANNOTATIONS: True
   NUM_WORKERS: 16

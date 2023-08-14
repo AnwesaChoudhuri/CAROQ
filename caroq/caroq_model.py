@@ -19,7 +19,7 @@ from .modeling.criterion import SetCriterion
 from .modeling.matcher import HungarianMatcher
 import pycocotools.mask as cocomask
 
-# from mask2former import file_helper, mots_helper
+from caroq.utils import file_helper, mots_helper
 import pdb
 import time
 from caroq_video.data_video.datasets.cityscapes_vps import CITYSCAPES_VPS_CATEGORIES
@@ -274,6 +274,8 @@ class MaskFormer(nn.Module):
                 x["image"].squeeze(0) for x in batched_inputs
             ]  # sequence can be huge when evaluating. Don't put on cuda
 
+            # only supports inference on batch size 1
+
             images = [
                 (x - self.pixel_mean.to(x.device)) / self.pixel_std.to(x.device)
                 for x in images
@@ -319,8 +321,8 @@ class MaskFormer(nn.Module):
                 self.metadata.name.find("vis") == -1
                 and self.metadata.name.find("vps") == -1
             ):
-                abc = [x["name"] for x in batched_inputs]
-                names = [a for b in abc for a in b]
+                names = [k.split("/")[-1] for k in batched_inputs[0]["file_names"]]
+                vid_name = batched_inputs[0]["file_names"][0].split("/")[-2]
 
             for img in imgs:
 
@@ -478,7 +480,7 @@ class MaskFormer(nn.Module):
             elif self.metadata.name.find("mots") > -1:
                 hyp_tracks = mots_helper.make_disjoint(all_tracks, "score")
                 file_helper.export_tracking_result_in_kitti_format(
-                    batched_inputs[0]["vid"],
+                    vid_name,
                     hyp_tracks,
                     True,
                     "",
@@ -501,52 +503,38 @@ class MaskFormer(nn.Module):
 
     def prepare_targets(self, targets, images):
 
-        if (
-            self.metadata.name.find("vis") == -1
-            and self.metadata.name.find("vps") == -1
-        ):  # for mots
+        h_pad, w_pad = images.tensor.shape[-2:]
+        gt_instances = []
+        for targets_per_video in targets:
+            _num_instance = len(targets_per_video["instances"][0])
+            mask_shape = [_num_instance, self.num_frames, h_pad, w_pad]
+            gt_masks_per_video = torch.zeros(
+                mask_shape, dtype=torch.bool, device=self.device
+            )
 
-            return [
-                {
-                    "labels": x["instances"]["labels"].to(self.device),
-                    "masks": x["instances"]["masks"].to(self.device),
-                }
-                for x in targets
-            ]
-        else:  # for vis and vps
+            gt_ids_per_video = []
+            for f_i, targets_per_frame in enumerate(targets_per_video["instances"]):
+                targets_per_frame = targets_per_frame.to(self.device)
+                h, w = targets_per_frame.image_size
 
-            h_pad, w_pad = images.tensor.shape[-2:]
-            gt_instances = []
-            for targets_per_video in targets:
-                _num_instance = len(targets_per_video["instances"][0])
-                mask_shape = [_num_instance, self.num_frames, h_pad, w_pad]
-                gt_masks_per_video = torch.zeros(
-                    mask_shape, dtype=torch.bool, device=self.device
-                )
+                gt_ids_per_video.append(targets_per_frame.gt_ids[:, None])
+                gt_masks_per_video[
+                    :, f_i, :h, :w
+                ] = targets_per_frame.gt_masks.tensor
 
-                gt_ids_per_video = []
-                for f_i, targets_per_frame in enumerate(targets_per_video["instances"]):
-                    targets_per_frame = targets_per_frame.to(self.device)
-                    h, w = targets_per_frame.image_size
+            gt_ids_per_video = torch.cat(gt_ids_per_video, dim=1)
+            valid_idx = (gt_ids_per_video != -1).any(dim=-1)
 
-                    gt_ids_per_video.append(targets_per_frame.gt_ids[:, None])
-                    gt_masks_per_video[
-                        :, f_i, :h, :w
-                    ] = targets_per_frame.gt_masks.tensor
+            gt_classes_per_video = targets_per_frame.gt_classes[valid_idx]  # N,
+            gt_ids_per_video = gt_ids_per_video[valid_idx]  # N, num_frames
 
-                gt_ids_per_video = torch.cat(gt_ids_per_video, dim=1)
-                valid_idx = (gt_ids_per_video != -1).any(dim=-1)
-
-                gt_classes_per_video = targets_per_frame.gt_classes[valid_idx]  # N,
-                gt_ids_per_video = gt_ids_per_video[valid_idx]  # N, num_frames
-
-                gt_instances.append(
-                    {"labels": gt_classes_per_video, "ids": gt_ids_per_video}
-                )
-                gt_masks_per_video = gt_masks_per_video[
-                    valid_idx
-                ].float()  # N, num_frames, H, W
-                gt_instances[-1].update({"masks": gt_masks_per_video})
+            gt_instances.append(
+                {"labels": gt_classes_per_video, "ids": gt_ids_per_video}
+            )
+            gt_masks_per_video = gt_masks_per_video[
+                valid_idx
+            ].float()  # N, num_frames, H, W
+            gt_instances[-1].update({"masks": gt_masks_per_video})
 
             return gt_instances
 

@@ -54,7 +54,7 @@ import pdb
 
 # from caroq.data.datasets.register_mots import register_all_mots
 
-# from caroq.mots_evaluation import MOTSEvaluator
+from caroq.mots_evaluation import MOTSEvaluator
 from caroq import add_maskformer2_config
 
 
@@ -125,7 +125,19 @@ class Trainer(DefaultTrainer):
         """
         Create evaluator(s) for a given dataset.
         """
-        if cfg.INPUT.DATASET_MAPPER_NAME == "youtube_vis":
+        if cfg.DATASETS.TRAIN[0].find("mots")>-1:
+            gt_dir = cfg.TEST.GT_DIR
+            output_dir = cfg.OUTPUT_DIR+"/"+cfg.TEST.OUTPUT_DIR
+            eval_mode = cfg.TEST.EVAL_MODE
+            seqmap_filename=cfg.TEST.SEQMAP
+
+            evaluator = MOTSEvaluator(gt_dir = gt_dir,
+                     output_dir = output_dir,
+                     eval_mode=eval_mode,
+                     seqmap_filename=seqmap_filename
+                     )
+
+        elif cfg.INPUT.DATASET_MAPPER_NAME == "youtube_vis":
             if output_folder is None:
                 output_folder = os.path.join(cfg.OUTPUT_DIR, "inference/")
                 os.makedirs(output_folder, exist_ok=True)

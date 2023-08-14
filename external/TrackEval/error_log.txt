@@ -711,3 +711,123 @@ external.TrackEval.trackeval.utils.TrackEvalException: File MOTS20-05.txt cannot
 
 
 
+KittiMOTS
+kittimots_0/new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/eval.py", line 198, in eval_sequence
+    data = dataset.get_preprocessed_seq_data(raw_data, cls)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/datasets/kitti_mots.py", line 302, in get_preprocessed_seq_data
+    gt_class_mask = gt_class_mask.astype(np.bool)
+  File "/home/anwesac2/anaconda3/envs/caroq/lib/python3.8/site-packages/numpy/__init__.py", line 305, in __getattr__
+    raise AttributeError(__former_attrs__[attr])
+AttributeError: module 'numpy' has no attribute 'bool'.
+`np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.
+The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:
+    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+
+
+
+
+
+KittiMOTS
+kittimots_0/new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/eval.py", line 198, in eval_sequence
+    data = dataset.get_preprocessed_seq_data(raw_data, cls)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/datasets/kitti_mots.py", line 307, in get_preprocessed_seq_data
+    tracker_class_mask = tracker_class_mask.astype(np.bool)
+  File "/home/anwesac2/anaconda3/envs/caroq/lib/python3.8/site-packages/numpy/__init__.py", line 305, in __getattr__
+    raise AttributeError(__former_attrs__[attr])
+AttributeError: module 'numpy' has no attribute 'bool'.
+`np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.
+The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:
+    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+
+
+
+
+
+KittiMOTS
+kittimots_0/new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/eval.py", line 198, in eval_sequence
+    data = dataset.get_preprocessed_seq_data(raw_data, cls)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/datasets/kitti_mots.py", line 354, in get_preprocessed_seq_data
+    data['gt_ids'][t] = gt_id_map[data['gt_ids'][t]].astype(np.int)
+  File "/home/anwesac2/anaconda3/envs/caroq/lib/python3.8/site-packages/numpy/__init__.py", line 305, in __getattr__
+    raise AttributeError(__former_attrs__[attr])
+AttributeError: module 'numpy' has no attribute 'int'.
+`np.int` was a deprecated alias for the builtin `int`. To avoid this error in existing code, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.
+The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:
+    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+
+
+
+
+
+KittiMOTS
+kittimots_0/new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/eval.py", line 200, in eval_sequence
+    seq_res[cls][met_name] = metric.eval_sequence(data)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/external/TrackEval/trackeval/metrics/hota.py", line 30, in eval_sequence
+    res[field] = np.zeros((len(self.array_labels)), dtype=np.float)
+  File "/home/anwesac2/anaconda3/envs/caroq/lib/python3.8/site-packages/numpy/__init__.py", line 305, in __getattr__
+    raise AttributeError(__former_attrs__[attr])
+AttributeError: module 'numpy' has no attribute 'float'.
+`np.float` was a deprecated alias for the builtin `float`. To avoid this error in existing code, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:
+    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+
+
+
+
+
+KittiMOTS
+saved_outputs/kittimots_0/new/
+Traceback (most recent call last):
+  File "/home/anwesac2/Workspace/CAROQ/caroq/../external/TrackEval/trackeval/eval.py", line 87, in evaluate
+    res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
+  File "/home/anwesac2/Workspace/CAROQ/caroq/../external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/caroq/../external/TrackEval/trackeval/eval.py", line 200, in eval_sequence
+    seq_res[cls][met_name] = metric.eval_sequence(data)
+  File "/home/anwesac2/Workspace/CAROQ/caroq/../external/TrackEval/trackeval/_timing.py", line 16, in wrap
+    result = f(*args, **kw)
+  File "/home/anwesac2/Workspace/CAROQ/caroq/../external/TrackEval/trackeval/metrics/identity.py", line 71, in eval_sequence
+    res['IDFN'] = fn_mat[match_rows, match_cols].sum().astype(np.int)
+  File "/home/anwesac2/anaconda3/envs/caroq/lib/python3.8/site-packages/numpy/__init__.py", line 305, in __getattr__
+    raise AttributeError(__former_attrs__[attr])
+AttributeError: module 'numpy' has no attribute 'int'.
+`np.int` was a deprecated alias for the builtin `int`. To avoid this error in existing code, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.
+The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:
+    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+
+
+
+
+
