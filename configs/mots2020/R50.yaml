@@ -1,0 +1,10 @@
+_BASE_: ../kittimots/R50.yaml
+DATASETS:
+  TRAIN: ("mots2020_train",)
+  TEST: ("mots2020_val",)
+TEST:
+  EVAL_PERIOD: 0
+  GT_DIR: "data/MOTS/train/"
+  OUTPUT_DIR: "new/"
+  EVAL_MODE: "train"
+  SEQMAP: "external/mots_tools/mots_eval/val_MOTS2020.seqmap"
