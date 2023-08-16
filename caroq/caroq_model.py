@@ -433,16 +433,16 @@ class MaskFormer(nn.Module):
                             mask_pred_result = sem_seg_postprocess(
                                 mask_pred_result,
                                 (current_height, current_width),
-                                current_height,
-                                current_width,
+                                batched_inputs[0]["height"],
+                                batched_inputs[0]["width"],
                             )
 
-                        # remove the padding
-                        mask_pred_result = mask_pred_result[
-                            :,
-                            : batched_inputs[0]["height"],
-                            : batched_inputs[0]["width"],
-                        ]
+                        # # remove the padding
+                        # mask_pred_result = mask_pred_result[
+                        #     :,
+                        #     : batched_inputs[0]["height"],
+                        #     : batched_inputs[0]["width"],
+                        # ]
 
                         if i == self.time_gap:
                             previous_tracks = tracks
