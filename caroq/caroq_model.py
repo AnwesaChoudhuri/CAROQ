@@ -256,7 +256,7 @@ class MaskFormer(nn.Module):
             features = self.backbone(images.tensor.reshape(-1, c, h, w))
             outputs, _ = self.sem_seg_head(
                 features, training=True
-            )  # training= true for track decoder (pairs during training)
+            )  
             targets = self.prepare_targets(batched_inputs, images)
 
             losses = self.criterion(outputs, targets)
@@ -536,7 +536,7 @@ class MaskFormer(nn.Module):
             ].float()  # N, num_frames, H, W
             gt_instances[-1].update({"masks": gt_masks_per_video})
 
-            return gt_instances
+        return gt_instances
 
     # inference for different tasks
 

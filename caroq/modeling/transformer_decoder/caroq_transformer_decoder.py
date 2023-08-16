@@ -786,6 +786,7 @@ class MultiScaleMaskedTransformerDecoder(nn.Module):
         outputs_class, outputs_mask, attn_mask = self.forward_prediction_heads(
             output, mask_features, attn_mask_target_size=size_list[0], training=training
         )
+
         predictions_class.append(outputs_class)
 
         if self.pe_layer_from_config == "3D":
